@@ -1,0 +1,115 @@
+/**
+ * BlankPlate | Yet another HTML5 Starter Kit
+ *
+ * BlankPlate Main stylesheet
+ *
+ * @copyright	Copyright 2012, Dimitris Krestos
+ * @license		Apache License, Version 2.0 (http://www.opensource.org/licenses/apache2.0.php)
+ * @link		http://vdw.staytuned.gr/html5-starter-kit-blankplate/
+ * @package		BlankPlate
+ * @version		v1.2.3
+ */
+
+/**
+ * WORLD
+ *
+ * -------------------------------------------------------------------------------------------------
+ */
+/**
+ * TABS
+ *
+ * -------------------------------------------------------------------------------------------------
+ */
+ .tabs > DIV {
+	/*border-top: 1px solid #c7c7c7*/
+	margin-top: 10px;
+	background: white !important;
+	/*border-bottom: 4px solid #E95855 !important;*/
+}
+
+.tabs UL.horizontal {
+	list-style: none outside none;
+	margin: 0;
+}
+
+.tabs LI {
+	margin: 0 10px 0 0;
+	display: inline-block;
+}
+
+.tabs li A {
+	display: block;
+	font-size: 18px;
+	font-weight: 300;
+	padding: 14px 24px;
+	text-decoration: none;
+}
+
+.tabs LI:hover {
+}
+
+.tabs LI:hover A {
+}
+
+.tabs .active {
+	border-bottom: 4px solid #68a697 !important;
+}
+
+.tabs .active A {
+}
+
+.tabs .link {
+	font-size: 14px;
+	font-weight: 300;
+	letter-spacing: 1px;
+	line-height: 48px;
+	margin-top: 20px;
+	margin-left: 6px;
+	text-decoration: none;
+}
+
+.tabs .link:hover {
+	text-decoration: underline;
+	color: inherit;
+}
+
+.tabs .anchorLink {
+	text-decoration: none;
+}
+
+.tabs .anchorLink:hover {
+	text-decoration: none;
+	border-bottom: none;
+	color: inherit;
+}
+
+.tabs .screenshot {
+	position: absolute;
+	clip: rect(0 0 0 0);
+}
+
+
+
+.tabs .logo {
+	margin-top: -6px;
+	margin-right: 10px;
+	vertical-align: middle;
+}
+
+.tabs .button {
+	background-color: #a0cac0;
+	border: none;
+	border-bottom: 4px solid #68a697;
+	color: #FFFFFF;
+	border-radius: 0;
+	font-size: 14px;
+	letter-spacing: 2px;
+	height: 48px;
+	line-height: 48px;
+}
+
+.tabs .button:hover {
+	background: #93b7ae;
+	color: #FFF;
+	border-bottom-color: #68a697;
+}

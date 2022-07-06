@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.experdb.configuration.mapper.DbsMapper">
+    <select id="selectColumsMonitoredDB" resultType="hashMap">
+      select column_name , data_type, numeric_precision 
+      from information_schema.columns
+      where table_name    = 'monitored_db'
+      and column_name not in ('md_id', 'md_last_modified_on')
+      order by ordinal_position;
+    </select>
+    <select id="selectAllMonitoredDB" resultType="hashMap">
+        select
+          md_id,
+          md_unique_name,
+          md_hostname,
+          md_port,
+          md_dbname,
+          md_user,
+          md_password,
+          md_is_superuser,
+          md_sslmode,
+          md_preset_config_name,
+          md_is_enabled,
+          md_statement_timeout_seconds,
+          md_dbtype,
+          md_include_pattern,
+          md_exclude_pattern,
+          md_group,
+          md_root_ca_path,
+          md_client_cert_path,
+          md_client_key_path,
+          md_password_type,
+          md_only_if_master,
+          md_preset_config_name_standby,
+          md_hagroup,
+          md_hadepth,
+          md_upid,
+          date_trunc('second', md_last_modified_on) as md_last_modified_on,
+          coalesce(md_config::text, '') as md_config,
+          coalesce(md_config_standby::text, '') as md_config_standby,
+          coalesce(md_custom_tags::text, '') as md_custom_tags,
+          coalesce(md_host_config::text, '') as md_host_config,
+          coalesce(md_include_pattern, '') as md_include_pattern,
+          coalesce(md_exclude_pattern, '') as md_exclude_pattern
+        from
+          pgwatch2.monitored_db
+        order by
+          md_is_enabled desc, md_id
+    </select>
+    <select id="selectPresetConfig" resultType="hashMap">
+      select
+        pc_name, pc_description, pc_config::text, date_trunc('second', pc_last_modified_on)::text as pc_last_modified_on,
+        coalesce((select array_to_string(array_agg(md_unique_name order by md_unique_name), ', ')
+          from pgwatch2.monitored_db where md_preset_config_name = pc_name and md_is_enabled
+          group by md_preset_config_name), '') as active_dbs
+      from
+        pgwatch2.preset_config
+      order by
+        pc_name
+    </select>
+    <insert id="insertMonitoredDb" parameterType="hashMap">
+      insert into
+        pgwatch2.monitored_db (md_unique_name, md_hostname, md_port, md_dbname, md_user, md_password, md_password_type, md_is_superuser,
+        md_sslmode, md_root_ca_path,md_client_cert_path, md_client_key_path, md_is_enabled, md_preset_config_name, md_config, md_statement_timeout_seconds, md_dbtype,
+        md_include_pattern, md_exclude_pattern, md_custom_tags, md_group, md_host_config, md_only_if_master, md_preset_config_name_standby, md_config_standby)
+      values
+        (#{md_unique_name}, #{md_hostname}, #{md_port}, #{md_dbname}, #{md_user}, #{md_password}, #{md_password_type}, true,
+        #{md_sslmode}, #{md_root_ca_path}, #{md_client_cert_path}, #{md_client_key_path}, ${md_is_enabled}, #{md_preset_config_name}, #{md_config} :: json, #{md_statement_timeout_seconds} :: integer, #{md_dbtype},
+        #{md_include_pattern}, #{md_exclude_pattern}, #{md_custom_tags} :: json, #{md_group}, #{md_host_config} :: json, ${md_only_if_master}, #{md_preset_config_name_standby}, #{md_config_standby} :: json)
+    </insert>
+    <update id="updateMonitoredDb" parameterType="hashMap">
+      with q_old as (
+          /* using CTE to be enable detect if connect info is being changed */
+          select * from pgwatch2.monitored_db
+          where md_id = #{md_id} :: integer
+        )
+        update
+          pgwatch2.monitored_db new
+        set
+          md_group = #{md_group},
+          md_hostname = #{md_hostname},
+          md_port = #{md_port},
+          md_dbname = #{md_dbname},
+          md_include_pattern = #{md_include_pattern},
+          md_exclude_pattern = #{md_exclude_pattern},
+          md_user = #{md_user},
+          md_password = case when #{md_password} = '***' and #{md_password_type} = new.md_password_type then new.md_password else #{md_password} end,
+          md_password_type = #{md_password_type},
+          md_is_superuser = true,
+          md_sslmode = #{md_sslmode},
+          md_root_ca_path = #{md_root_ca_path},
+          md_client_cert_path = #{md_client_cert_path},
+          md_client_key_path = #{md_client_key_path},
+          md_dbtype = #{md_dbtype},
+          md_is_enabled = ${md_is_enabled},
+          md_preset_config_name = #{md_preset_config_name},
+          md_preset_config_name_standby = #{md_preset_config_name_standby},
+          md_config = to_json(#{md_config} ::json),
+          md_config_standby = to_json(#{md_config_standby} ::json),
+          md_host_config = to_json(#{md_host_config} ::json),
+          md_only_if_master = #{md_only_if_master},
+          md_custom_tags = to_json(#{md_custom_tags} ::json),
+          md_statement_timeout_seconds = #{md_statement_timeout_seconds} :: integer,
+          md_last_modified_on = now()
+        from
+          q_old
+        where
+          new.md_id = #{md_id} :: integer
+    </update>
+    <delete id="deleteMonitoredDb" parameterType="hashMap">
+      delete from pgwatch2.monitored_db where md_id = #{md_id} :: integer
+    </delete>
+</mapper>
