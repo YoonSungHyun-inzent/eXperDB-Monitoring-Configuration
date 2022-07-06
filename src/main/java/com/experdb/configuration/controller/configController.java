@@ -194,6 +194,7 @@ public class configController {
         int preset = metricsService.deletePresetConfigs(paramMap);
         JSONObject result = new JSONObject();
 
+        //인정
         result.put("result", preset);
 
         return result;
