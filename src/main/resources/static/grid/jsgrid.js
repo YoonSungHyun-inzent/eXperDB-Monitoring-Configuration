@@ -594,13 +594,28 @@
 
         _createNoDataRow: function() {
             var amountOfFields = 0;
-            this._eachField(function() {
+            var totalWidth = 0;
+            this._eachField(function(field, index) {
                 amountOfFields++;
+                totalWidth += field.width;
             });
 
-            return $("<tr>").addClass(this.noDataRowClass)
-                .append($("<td>").addClass(this.cellClass).attr("colspan", amountOfFields)
-                    .append(this.renderTemplate(this.noDataContent, this)));
+            return $("<tr>")
+                .addClass(this.noDataRowClass)
+                .append($("<td>")
+                .addClass(this.cellClass)
+                .attr("colspan", amountOfFields)
+                .attr("width", totalWidth)
+                .append(this.renderTemplate(this.noDataContent, this)));
+
+                // var amountOfFields = 0;
+                // this._eachField(function() {
+                //     amountOfFields++;
+                // });
+    
+                // return $("<tr>").addClass(this.noDataRowClass)
+                //     .append($("<td>").addClass(this.cellClass).attr("colspan", amountOfFields)
+                //         .append(this.renderTemplate(this.noDataContent, this)));
         },
 
         _createRow: function(item, itemIndex) {

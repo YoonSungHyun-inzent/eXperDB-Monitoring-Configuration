@@ -1,64 +1,21 @@
 $(document).ready(function(){
-    initJsGridPreset();
 	initJsGridMetricDefinitions();	
-
-	$("#show_metrics_dialog").dialog({
-		autoOpen: false,
-		width: 400,
-		close: function() {
-		}
-	});
-
-	$("#copy_metrics_dialog").dialog({
-		autoOpen: false,
-		width: 400,
-		close: function() {
-			$("#copy_metrics_dialog_form").validate().resetForm();
-			$("#copy_metrics_dialog_form").find(".error").removeClass("error");
-		}
-	});
-
-	$("#copy_metrics_dialog_form").validate({
-		rules: {
-			name: "required",
-			age: { required: true, range: [18, 150] },
-			address: { required: true, minlength: 10 },
-			country: "required"
-		},
-		messages: {
-			name: "Please enter name",
-			age: "Please enter valid age",
-			address: "Please enter address (more than 10 chars)",
-			country: "Please select country"
-		},
-		submitHandler: function() {
-			formSubmitHandler();
-		}
-	});
-
-    /**
-     * tab set
-     */
-    $('.tabs').tabslet();
-
-	$('.tabs').on("_after", function() {
-		// do stuff here
-		$("#" + $(this).find("div:visible > div").attr("id")).jsGrid("refresh");
-	});
 });
 
 var initJsGridMetricDefinitions = function() {
 	var grid_name = "jsGridMetricDefinitions";
 
-    $("#jsGridMetricDefinitions").jsGrid({
+	$("#jsGridMetricDefinitions").jsGrid({
 		width: "100%",
 		height: "600",
 
-		inserting: true,
-		editing: true,
+		inserting: false,
+		editing: false,
 		sorting: true,
 		paging: false,
 		autoload: true,
+
+		filtering: true,
 
 		// pageSize: 5,
 
@@ -66,8 +23,10 @@ var initJsGridMetricDefinitions = function() {
 			if(this.editing) {
 				this.editItem($(args.event.target).closest("tr"));
 			}
+			
+			var mId = args.item.m_id;
 
-			$("#copy_metrics_dialog").dialog("close");
+			openMsModal("EDIT", mId);
 		},
 
 		deleteConfirm: function(item) {
@@ -85,13 +44,14 @@ var initJsGridMetricDefinitions = function() {
 		},
 
 		controller: {
-			loadData: function() {
+			loadData: function(filter) {
 				var d = $.Deferred();
 
 				$.ajax({
 					url: "/selectMetrics",
 					type : "post",
-					dataType: "json"
+					dataType: "json",
+					data: filter
 				}).done(function(response) {
 					d.resolve(response);
 				});
@@ -195,24 +155,34 @@ var initJsGridMetricDefinitions = function() {
 
 		// data: clients,
 		fields: [
-			{ type: "control" },
+			{
+				type: "control",
+				modeSwitchButton: false,
+				editButton: false,
+				headerTemplate: function () {
+					return $("<button>").attr("type", "button").addClass("jsgrid-button jsgrid-mode-button jsgrid-insert-mode-button")
+						.on("click", function () {
+							openMsModal("ADD");
+						});
+				}
+			},
 			{ name: "m_id", width: 80, visible: false },
 			{ name: "m_name", headtitle: "Metric", type: "text", width: 170 },
 			{ name: "m_pg_version_from", headtitle: "PG ver", type: "text", width: 80 },
-			{ name: "m_sql", headtitle: "SQL", type: "textarea", width: 400, itemTemplate: function(value) {
-				return $("<div>").addClass("sql").text(value);
+			{ name: "m_sql", headtitle: "SQL", type: "textarea", width: 200, itemTemplate: function(value) {
+				return $("<div>").addClass("text-truncate").text(value);
 			} },
-			{ name: "m_sql_su", headtitle: "Privileged SQL", type: "textarea", width: 400, itemTemplate: function(value) {
-				return $("<div>").addClass("sql").text(value);
+			{ name: "m_sql_su", headtitle: "Privileged SQL", type: "textarea", width: 200, itemTemplate: function(value) {
+				return $("<div>").addClass("text-truncate").text(value);
 			} },
-			{ name: "m_comment", headtitle: "Comment", type: "text", width: 400 },
-			{ name: "m_is_active", headtitle: "Is active?", type: "checkbox", width: 80 },
-			{ name: "m_is_helper", headtitle: "Is helper?", type: "checkbox", width: 80 },
-			{ name: "m_master_only", headtitle: "Master only?", type: "checkbox", width: 80, editTemplate: checkboxTemplate },
-			{ name: "m_standby_only", headtitle: "Standby only?", type: "checkbox", width: 80, editTemplate: checkboxTemplate },
-			{ name: "ma_metric_attrs", headtitle: "Metric attributes", type: "textarea", width: 400 },
-			{ name: "m_column_attrs", headtitle: "Column attributes", type: "textarea", width: 400 },
-            { name: "m_last_modified_on", headtitle: "Last modified", type: "text", width: 200, visible: false }
+			{ name: "m_comment", headtitle: "Comment", type: "text", width: 200 },
+			// { name: "m_is_active", headtitle: "Is active?", type: "checkbox", width: 80 },
+			// { name: "m_is_helper", headtitle: "Is helper?", type: "checkbox", width: 80 },
+			// { name: "m_master_only", headtitle: "Master only?", type: "checkbox", width: 80 },
+			// { name: "m_standby_only", headtitle: "Standby only?", type: "checkbox", width: 80 },
+			// { name: "ma_metric_attrs", headtitle: "Metric attributes", type: "textarea", width: 400 },
+			// { name: "m_column_attrs", headtitle: "Column attributes", type: "textarea", width: 400 },
+			{ name: "m_last_modified_on", headtitle: "Last modified", type: "text", width: 200, visible: false }
 		]
 	});
 
@@ -221,6 +191,56 @@ var initJsGridMetricDefinitions = function() {
 	 */
 	 $('#jsGridMetricDefinitions .jsgrid-grid-body').scroll(function () {
 		UpdateColPos(1);
+	});
+
+	$("#msModalFormSubmit").click(function() {
+		var params = changeSnakeCase($("#msModalForm").serializeArray());
+		var msModalMode = $("#msModalCategory").val();
+		var requestUrls = (msModalMode ?? "") == "ADD" ? "/insertMetric" : ((msModalMode ?? "") == "EDIT" ? "/updateMetric" : "" ) ; 
+		var returnMsg = (msModalMode ?? "") == "ADD" ? "등록" : ((msModalMode ?? "") == "EDIT" ? "수정" : "" ) ; 
+
+		$.each($("#msModalForm [type=checkbox]"), function(i, v){
+			var tempName = v.id;
+			var tempValue = v.checked;
+
+			tempName = tempName.replace("msModal", "").replace(/([A-Z])/g, function(arg){
+				            return "_"+arg.toLowerCase();
+				    }).replace("_", "");
+
+			params.push({name:tempName, value:tempValue});
+		});
+
+		$.ajax({
+			url : requestUrls,
+			data : params,
+			//dataType : "json",
+			type : "post",
+			async : false,
+			error : function(xhr, status, error) {
+				if(xhr.status == 401) {
+					alert(message_msg02);
+					top.location.href = "/";
+				} else if(xhr.status == 403) {
+					alert(message_msg03);
+					top.location.href = "/";
+				} else {
+					alert("ERROR CODE : "+ xhr.status+ "\n\n"+ "ERROR Message : "+ error+ "\n\n"+ "Error Detail : "+ xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
+				}
+			},
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader("AJAX", true);
+			 },
+			success : function(result) {
+				if(result.length==0){
+					alert(returnMsg + " 실패");
+				}else{
+					alert(returnMsg + " 완료");
+
+					gridRefresh("jsGridMetricDefinitions");
+					$("#msModal").modal('hide');
+				}
+			}
+		});
 	});
 
 }
@@ -235,162 +255,6 @@ var UpdateColPos = function(cols) {
 		});
 }
 
-
-var initJsGridPreset = function() {
-	var grid_name = "jsGridPreset";
-
-    $("#jsGridPreset").jsGrid({
-		width: "100%",
-		height: "600",
-
-		inserting: true,
-		editing: true,
-		sorting: true,
-		paging: false,
-		autoload: true,
-
-		rowClick: function(args){
-			if(this.editing) {
-				this.editItem($(args.event.target).closest("tr"));
-			}
-
-			$("#copy_metrics_dialog").dialog("close");
-		},
-
-		deleteConfirm: function(item) {
-			return "\"" + item.pc_name + "\" 삭제하시겠습니까?";
-		},
-
-		controller: {
-			loadData: function() {
-				var d = $.Deferred();
-
-				$.ajax({
-					url: "/selectPresetConfigs",
-					type : "post",
-					dataType: "json"
-				}).done(function(response) {
-					d.resolve(response);
-				});
-
-				return d.promise();
-			},
-			insertItem: function (params) {
-				return $.ajax({
-					url : "/insertPresetConfigs",
-					data : params,
-					//dataType : "json",
-					type : "post",
-					async : false,
-					error : function(xhr, status, error) {
-						if(xhr.status == 401) {
-							alert(message_msg02);
-							top.location.href = "/";
-						} else if(xhr.status == 403) {
-							alert(message_msg03);
-							top.location.href = "/";
-						} else {
-							alert("ERROR CODE : "+ xhr.status+ "\n\n"+ "ERROR Message : "+ error+ "\n\n"+ "Error Detail : "+ xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
-						}
-					},
-					beforeSend: function(xhr) {
-						xhr.setRequestHeader("AJAX", true);
-					 },
-					success : function(val) {
-						if(val.result==0){
-							alert("등록 실패");
-						}else{
-							alert("등록 완료");
-						}
-						gridRefresh(grid_name);
-					}
-				});
-			},
-			updateItem: function (params) {
-				return $.ajax({
-					url : "/updatePresetConfigs",
-					data : params,
-					// dataType : "json",
-					type : "post",
-					async : false,
-					error : function(xhr, status, error) {
-						if(xhr.status == 401) {
-							alert(message_msg02);
-							top.location.href = "/";
-						} else if(xhr.status == 403) {
-							alert(message_msg03);
-							top.location.href = "/";
-						} else {
-							alert("ERROR CODE : "+ xhr.status+ "\n\n"+ "ERROR Message : "+ error+ "\n\n"+ "Error Detail : "+ xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
-						}
-					},
-					beforeSend: function(xhr) {
-						xhr.setRequestHeader("AJAX", true);
-					 },
-					success : function(val) {
-						if(val.result==0){
-							alert("수정 실패");
-						}else{
-							alert("수정 완료");
-						}
-						gridRefresh(grid_name);
-					}
-				});
-			},
-			deleteItem: function (params) {
-				return $.ajax({
-					url : "/deletePresetConfigs",
-					data : params,
-					// dataType : "json",
-					type : "post",
-					async : false,
-					error : function(xhr, status, error) {
-						if(xhr.status == 401) {
-							alert(message_msg02);
-							top.location.href = "/";
-						} else if(xhr.status == 403) {
-							alert(message_msg03);
-							top.location.href = "/";
-						} else {
-							alert("ERROR CODE : "+ xhr.status+ "\n\n"+ "ERROR Message : "+ error+ "\n\n"+ "Error Detail : "+ xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
-						}
-					},
-					beforeSend: function(xhr) {
-						xhr.setRequestHeader("AJAX", true);
-					 },
-					success : function(val) {
-						if(val.result==0){
-							alert("삭제 실패");
-						}else{
-							alert("삭제 완료");
-						}
-						gridRefresh(grid_name);
-					}
-				});
-			}
-		},
-
-		// data: clients,
-		fields: [
-			{ type: "control" },
-			{ name: "pc_name", headtitle: "Name", type:"text", width: 80, align: "center" },
-			{ name: "pc_description", headtitle: "Description", type: "textarea", width: 200, itemTemplate: function(value) {
-				return $("<div>").addClass("sql").text(value);
-			} },
-			{ name: "pc_config", headtitle: "Config JSON", type: "textarea", width: 200, validate: "required", itemTemplate: function(value) {
-				return $("<div>").addClass("sql").text(value);
-			} },
-			{ name: "active_dbs", headtitle: "Active DBs using config", width: 200, itemTemplate: hyperlinkItemTamplate },
-            { name: "pc_last_modified_on", headtitle: "Last modified", type: "text", width: 200, visible: false }
-		]
-	});
-}
-
-var hyperlinkItemTamplate = function(value, item){
-    var $link = $("<a>").attr("href", "/dbs").text(item.active_dbs);
-    return $("<div>").append($link);
-}
-
 var gridRefresh = function(grid_name){
 	$("#" + grid_name).jsGrid("option", "inserting", false);
 	$("#" + grid_name).jsGrid("loadData");
@@ -398,17 +262,91 @@ var gridRefresh = function(grid_name){
 	$("#" + grid_name + " > .jsgrid-grid-body").scrollLeft(0);
 }
 
-var checkboxTemplate = function(value, item){
-	var $check = jsGrid.fields.checkbox.prototype.editTemplate.call(this);
-	var grid = this._grid;
+var openMsModal = function (category, id) {
+	msModalMode = category;
 
-	$check.on("change", function() {
-		// your handler here
-		if(grid.option('fields')[9].editControl.prop("checked") && grid.option('fields')[10].editControl.prop("checked")){
-			alert("Master 또는 Standby 중 하나만 선택해주세요.");
-			grid.option('fields')[9].editControl.prop("checked", false);
-			grid.option('fields')[10].editControl.prop("checked", false);
+	$("#msModalForm")[0].reset();
+	$("#msModalCategory").val(category);
+
+	if(category == "ADD"){
+		$("#msModalTitle").text("Metrics 등록");
+		$("#msModalMName").prop("readonly", false);
+		$("#msModal").modal('show');
+	}
+	else if(category == "EDIT"){
+		$("#msModalTitle").text("Metrics 수정");
+		$("#msModalMId").val(id);
+		$("#msModalMName").prop("readonly", true);
+		selectMetricsDetail(id);
+	}
+}
+
+var selectMetricsDetail = function(id) {
+	$.ajax({
+		url : "/selectMetricsDetail",
+		data : "m_id=" + id,
+		//dataType : "json",
+		type : "get",
+		async : false,
+		error : function(xhr, status, error) {
+			if(xhr.status == 401) {
+				alert(message_msg02);
+				top.location.href = "/";
+			} else if(xhr.status == 403) {
+				alert(message_msg03);
+				top.location.href = "/";
+			} else {
+				alert("ERROR CODE : "+ xhr.status+ "\n\n"+ "ERROR Message : "+ error+ "\n\n"+ "Error Detail : "+ xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
+			}
+		},
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader("AJAX", true);
+		 },
+		success : function(result) {
+			console.log(result);
+
+			initModalMsForm(result);
 		}
 	});
-	return $check;
+}
+
+var initModalMsForm = function(params) {
+	$.each(params, function(i, data){
+		var jsonData = data;
+	
+		$("#msModalMName").val(jsonData.m_name);
+		$("#msModalPgVersion").val(jsonData.m_pg_version_from);
+		
+		$("#msModalMSql").val(jsonData.m_sql);
+		$("#msModalMSqlSu").val(jsonData.m_sql_su);
+		$("#msModalMComment").val(jsonData.m_comment);
+		$("#msModalMColumnAttrs").val(jsonData.m_column_attrs);
+		$("#msModalMaMetricAttrs").val(jsonData.ma_metric_attrs);
+
+		$("#msModalMIsActive").prop("checked", jsonData.m_is_active);
+		$("#msModalMIsHelper").prop("checked", jsonData.m_is_hlper);
+		$("#msModalMMasterOnly").prop("checked", jsonData.m_master_only);
+		$("#msModalMStandbyOnly").prop("checked", jsonData.m_standby_only);
+	});
+
+	$("#msModal").modal('show');
+}
+
+var changeSnakeCase = function(params) {
+	var changeArr = [];
+
+	$.each(params, function(i, v) {
+		var tempObject = {};
+		var tempName = v.name;
+
+		tempName = tempName.replace("msModal", "").replace(/([A-Z])/g, function(arg){
+			            return "_"+arg.toLowerCase();
+			    }).replace("_", "");
+
+		tempObject['name'] = tempName;
+		tempObject['value'] = v.value;
+		changeArr.push(tempObject);
+	});
+
+	return changeArr;
 }

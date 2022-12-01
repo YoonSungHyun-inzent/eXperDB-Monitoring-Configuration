@@ -2,7 +2,7 @@ var jsGridCustumFields = {
 	password : function(config) {
 		jsGrid.Field.call(this, config);
 	},
-	select_custom_link : function(config) {
+	select_custom_shift : function(config) {
 		jsGrid.Field.call(this, config);
 	}
 };
@@ -44,58 +44,54 @@ jsGridCustumFields.password.prototype = new jsGrid.Field({
 	}
 });
 
-jsGridCustumFields.select_custom_link.prototype = new jsGrid.Field({
+jsGridCustumFields.select_custom_shift.prototype = new jsGrid.Field({
 	items: [],
 	textField: "",
 	
 	itemTemplate: function(value) {
-		return $.makeArray(value).join(", ");
-	},
-	
-	_createSelect: function(selected) {
-		var textField = this.textField;
-		var $result = $("<select>");
-
-		grid.fieldOption("myGridField", "visible", true);
-		
-		$.each(this.items, function(_, item) {
-			var value = item[textField];
-			var $opt = $("<option>").text(value);
-			
-			if($.inArray(value, selected) > -1) {
-				$opt.attr("selected", "selected");
-			}
-			
-			$result.append($opt);
-		});
-
-		return $result;
+		return value;
 	},
 	
 	insertTemplate: function() {
-		var insertControl = this._insertControl = this._createSelect();
+		var insertControl = this.insertControl = this._createSelect();
 
-		return insertControl;
+		return this.insertControl = this._createSelect();
 	},
 	
-	editTemplate: function(value) {
-		var editControl = this._editControl = this._createSelect(value);
-
+	editTemplate: function(value, items) {
+		var editControl = this._editControl = this._createSelect(items);
+		
 		return editControl;
 	},
 	
 	insertValue: function() {
-		return this._insertControl.find("option:selected").map(function() {    
-			return this.selected ? $(this).text() : null;
-		});
+		return this.insertControl.val();
 	},
 	
 	editValue: function() {
-		return this._editControl.find("option:selected").map(function() {    
-			return this.selected ? $(this).text() : null;
+		return this._editControl.val();
+	},
+
+	_createSelect: function(selected) {
+		var valueField = this.valueField;
+		var seletedHostName = (selected ?? "") != "" ? selected.md_hostname : "";
+		var seletedItemUh = (selected ?? "") != "" ? selected.ms_upstream_hostname : "";
+		var $result = $("<select>");
+	
+		$.each(this.items, function(_, item) {
+			var value = item[valueField];
+			var $opt = $("<option>").text(value).attr("value", value);
+	
+			if(seletedHostName != value || seletedHostName == "") {
+				$result.append($opt);
+				
+				$opt.prop("selected", (seletedItemUh === value));
+			}
 		});
-	}
+	
+		return $result;
+	},
 });
 
 jsGrid.fields.password = jsGridCustumFields.password;
-jsGrid.fields.select_custom_link = jsGridCustumFields.select_custom_link;
+jsGrid.fields.select_custom_shift = jsGridCustumFields.select_custom_shift;

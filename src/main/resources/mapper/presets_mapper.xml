@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.experdb.configuration.mapper.PresetsMapper">
+    <select id="selectPresetConfigs" resultType="hashMap">
+        select
+          pc_name, pc_description, pc_config::text, date_trunc('second', pc_last_modified_on)::text as pc_last_modified_on,
+          coalesce((select array_to_string(array_agg(md_unique_name order by md_unique_name), ', ')
+            from experdb.monitored_db where md_preset_config_name = pc_name and md_is_enabled
+            group by md_preset_config_name), '') as active_dbs
+        from
+          experdb.preset_config
+        order by
+          pc_name
+    </select>
+    <select id="selectPresetConfigsDetail" resultType="hashMap">
+        select
+          pc_name, pc_description, pc_config::text, date_trunc('second', pc_last_modified_on)::text as pc_last_modified_on,
+          coalesce((select array_to_string(array_agg(md_unique_name order by md_unique_name), ', ')
+            from experdb.monitored_db where md_preset_config_name = pc_name and md_is_enabled
+            group by md_preset_config_name), '') as active_dbs
+        from
+          experdb.preset_config
+        where
+          pc_name = #{pc_name}
+    </select>
+    <insert id="insertPresetConfigs" parameterType="hashMap">
+        insert into
+          experdb.preset_config (pc_name, pc_description, pc_config)
+        values
+          (#{pc_name}, #{pc_description}, to_json(#{pc_config} ::json))
+    </insert>
+    <update id="updatePresetConfigs" parameterType="hashMap">
+        update
+          experdb.preset_config
+        set
+          pc_description = #{pc_description},
+          pc_config = to_json(#{pc_config} ::json),
+          pc_last_modified_on = now()
+        where
+          pc_name = #{pc_name}
+    </update>
+    <delete id="deletePresetConfigs" parameterType="hashMap">
+        delete from experdb.preset_config where pc_name = #{pc_name}
+    </delete>
+</mapper>

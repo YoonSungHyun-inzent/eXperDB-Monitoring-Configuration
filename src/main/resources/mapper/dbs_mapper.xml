@@ -32,18 +32,54 @@
           md_password_type,
           md_only_if_master,
           md_preset_config_name_standby,
-          md_hagroup,
-          md_hadepth,
-          md_upid,
           date_trunc('second', md_last_modified_on) as md_last_modified_on,
           coalesce(md_config::text, '') as md_config,
           coalesce(md_config_standby::text, '') as md_config_standby,
           coalesce(md_custom_tags::text, '') as md_custom_tags,
           coalesce(md_host_config::text, '') as md_host_config,
           coalesce(md_include_pattern, '') as md_include_pattern,
-          coalesce(md_exclude_pattern, '') as md_exclude_pattern
+          coalesce(md_exclude_pattern, '') as md_exclude_pattern,
+          b.ms_upstream_hostname
         from
-          pgwatch2.monitored_db
+          experdb.monitored_db a
+        left outer join 
+          experdb.monitored_server b
+        on
+          a.md_hostname = b.ms_hostname
+        order by
+          md_is_enabled desc, md_id
+    </select>
+    <select id="selectMonitoredDbDetail" resultType="hashMap">
+        select
+          md_unique_name,
+          md_dbtype,
+          md_hostname,
+          md_port,
+          md_dbname,
+          md_user,
+          md_password,
+          md_password_type,
+          md_sslmode,
+          md_group,
+          md_root_ca_path,
+          md_client_cert_path,
+          md_client_key_path,
+          md_preset_config_name,
+          md_preset_config_name_standby,
+          coalesce(md_config::text, '') as md_config,
+          coalesce(md_config_standby::text, '') as md_config_standby,
+          coalesce(md_custom_tags::text, '') as md_custom_tags,
+          coalesce(md_host_config::text, '') as md_host_config,
+          md_statement_timeout_seconds,
+          b.ms_upstream_hostname
+        from
+          experdb.monitored_db a
+        left outer join 
+          experdb.monitored_server b
+        on
+          a.md_hostname = b.ms_hostname
+        where
+          a.md_id = #{md_id} :: integer
         order by
           md_is_enabled desc, md_id
     </select>
@@ -51,63 +87,80 @@
       select
         pc_name, pc_description, pc_config::text, date_trunc('second', pc_last_modified_on)::text as pc_last_modified_on,
         coalesce((select array_to_string(array_agg(md_unique_name order by md_unique_name), ', ')
-          from pgwatch2.monitored_db where md_preset_config_name = pc_name and md_is_enabled
+          from experdb.monitored_db where md_preset_config_name = pc_name and md_is_enabled
           group by md_preset_config_name), '') as active_dbs
       from
-        pgwatch2.preset_config
+        experdb.preset_config
       order by
         pc_name
     </select>
     <insert id="insertMonitoredDb" parameterType="hashMap">
       insert into
-        pgwatch2.monitored_db (md_unique_name, md_hostname, md_port, md_dbname, md_user, md_password, md_password_type, md_is_superuser,
-        md_sslmode, md_root_ca_path,md_client_cert_path, md_client_key_path, md_is_enabled, md_preset_config_name, md_config, md_statement_timeout_seconds, md_dbtype,
+        experdb.monitored_db (md_unique_name, md_hostname, md_port, md_dbname, md_user, md_password, md_password_type, md_is_superuser,
+        md_sslmode, <if test = '!"disable".equalsIgnoreCase(md_sslmode)'> md_root_ca_path,md_client_cert_path, md_client_key_path,</if> md_is_enabled, md_preset_config_name, md_config, md_statement_timeout_seconds, md_dbtype,
         md_include_pattern, md_exclude_pattern, md_custom_tags, md_group, md_host_config, md_only_if_master, md_preset_config_name_standby, md_config_standby)
       values
         (#{md_unique_name}, #{md_hostname}, #{md_port}, #{md_dbname}, #{md_user}, #{md_password}, #{md_password_type}, true,
-        #{md_sslmode}, #{md_root_ca_path}, #{md_client_cert_path}, #{md_client_key_path}, ${md_is_enabled}, #{md_preset_config_name}, #{md_config} :: json, #{md_statement_timeout_seconds} :: integer, #{md_dbtype},
-        #{md_include_pattern}, #{md_exclude_pattern}, #{md_custom_tags} :: json, #{md_group}, #{md_host_config} :: json, ${md_only_if_master}, #{md_preset_config_name_standby}, #{md_config_standby} :: json)
+        #{md_sslmode}, <if test = '!"disable".equalsIgnoreCase(md_sslmode)'>  #{md_root_ca_path}, #{md_client_cert_path}, #{md_client_key_path},</if> true, #{md_preset_config_name}, #{md_config} :: json, #{md_statement_timeout_seconds} :: integer, #{md_dbtype},
+        null, null, #{md_custom_tags} :: json, #{md_group}, #{md_host_config} :: json, false, #{md_preset_config_name_standby}, #{md_config_standby} :: json)
+        returning
+          md_id;
+
+        insert into 
+          experdb.monitored_server ( ms_hostname, ms_hagroup_id, ms_upstream_hostname )
+        values 
+          ( #{md_hostname}, (select coalesce(max(ms_hagroup_id), 0) + 1 from experdb.monitored_server where ms_upstream_hostname = #{md_hostname}), #{ms_upstream_hostname} )
+        on conflict( ms_hostname )
+        do 
+          update set ms_upstream_hostname = #{ms_upstream_hostname};
     </insert>
     <update id="updateMonitoredDb" parameterType="hashMap">
       with q_old as (
           /* using CTE to be enable detect if connect info is being changed */
-          select * from pgwatch2.monitored_db
+          select * from experdb.monitored_db
           where md_id = #{md_id} :: integer
         )
         update
-          pgwatch2.monitored_db new
+          experdb.monitored_db new
         set
           md_group = #{md_group},
           md_hostname = #{md_hostname},
           md_port = #{md_port},
           md_dbname = #{md_dbname},
-          md_include_pattern = #{md_include_pattern},
-          md_exclude_pattern = #{md_exclude_pattern},
           md_user = #{md_user},
-          md_password = case when #{md_password} = '***' and #{md_password_type} = new.md_password_type then new.md_password else #{md_password} end,
+          md_password = case when #{md_password} = '' and #{md_password_type} = new.md_password_type then new.md_password else #{md_password} end,
           md_password_type = #{md_password_type},
           md_is_superuser = true,
           md_sslmode = #{md_sslmode},
+          <if test = '!"disable".equalsIgnoreCase(md_sslmode)'> 
           md_root_ca_path = #{md_root_ca_path},
           md_client_cert_path = #{md_client_cert_path},
           md_client_key_path = #{md_client_key_path},
+          </if>
           md_dbtype = #{md_dbtype},
-          md_is_enabled = ${md_is_enabled},
           md_preset_config_name = #{md_preset_config_name},
           md_preset_config_name_standby = #{md_preset_config_name_standby},
           md_config = to_json(#{md_config} ::json),
           md_config_standby = to_json(#{md_config_standby} ::json),
           md_host_config = to_json(#{md_host_config} ::json),
-          md_only_if_master = #{md_only_if_master},
           md_custom_tags = to_json(#{md_custom_tags} ::json),
           md_statement_timeout_seconds = #{md_statement_timeout_seconds} :: integer,
           md_last_modified_on = now()
         from
           q_old
         where
-          new.md_id = #{md_id} :: integer
+          new.md_id = #{md_id} :: integer;
+
+        update
+          experdb.monitored_server
+        set
+          ms_upstream_hostname = #{ms_upstream_hostname}
+        where
+          ms_hostname = #{md_hostname};
     </update>
     <delete id="deleteMonitoredDb" parameterType="hashMap">
-      delete from pgwatch2.monitored_db where md_id = #{md_id} :: integer
+      delete from experdb.monitored_db where md_id = #{md_id} :: integer;
+
+      delete from experdb.monitored_server where ms_hostname = #{md_hostname};
     </delete>
 </mapper>

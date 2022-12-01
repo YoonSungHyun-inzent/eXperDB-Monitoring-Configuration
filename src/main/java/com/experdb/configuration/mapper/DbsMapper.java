@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 @MapperScan
 public interface DbsMapper {
     public List<Map<String, Object>> selectColumsMonitoredDB() throws Exception;
+    public List<Map<String, Object>> selectMonitoredDbDetail(String md_id) throws Exception;
     public List<Map<String, Object>> selectAllMonitoredDB() throws Exception;
     public List<Map<String, Object>> selectPresetConfig() throws Exception;
     public int insertMonitoredDb(HashMap<String,Object> map) throws Exception;

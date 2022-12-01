@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.experdb.configuration.mapper.DbsMapper;
 import com.experdb.configuration.service.serviceInterface.DbsService;
@@ -31,7 +30,7 @@ public class DbsServiceImpl implements DbsService {
 
     @Override
     public int insertMonitoredDb(HashMap<String, Object> map) throws Exception {
-        String[] ChkJsonParam = new String[] {"md_config", "md_config_standby", "md_host_config", "md_custom_tags"} ;
+        String[] ChkJsonParam = new String[] {"md_config", "md_config_standby", "md_host_config", "md_custom_tags", "md_preset_config_name", "md_preset_config_name_standby", "ms_upstream_hostname"} ;
         HashMap<String, Object> tempMap = new HashMap<>();
 
         Arrays.sort(ChkJsonParam);
@@ -49,14 +48,34 @@ public class DbsServiceImpl implements DbsService {
         }
         );
 
-        System.out.println("tempMap :: " + tempMap.toString());
+        // System.out.println("tempMap :: " + tempMap.toString());
 
         return dbsMapper.insertMonitoredDb(tempMap);
     }
 
     @Override
     public int updateMonitoredDb(HashMap<String, Object> map) throws Exception {
-        return dbsMapper.updateMonitoredDb(map);
+        String[] ChkJsonParam = new String[] {"md_config", "md_config_standby", "md_host_config", "md_custom_tags", "md_preset_config_name", "md_preset_config_name_standby", "ms_upstream_hostname"} ;
+        HashMap<String, Object> tempMap = new HashMap<>();
+
+        Arrays.sort(ChkJsonParam);
+
+        map.forEach( (key, value) -> {
+            if(Arrays.binarySearch(ChkJsonParam, key) > -1){
+                if(StringUtils.isEmpty(value)){
+                    tempMap.put(key, null);
+                }else{
+                    tempMap.put(key, value);
+                }
+            }else{
+                tempMap.put(key, value);
+            }
+        }
+        );
+
+        // System.out.println(tempMap.toString());
+
+        return dbsMapper.updateMonitoredDb(tempMap);
     }
 
     @Override
@@ -67,6 +86,11 @@ public class DbsServiceImpl implements DbsService {
     @Override
     public int deleteMonitoredDb(HashMap<String, Object> map) throws Exception {
         return dbsMapper.deleteMonitoredDb(map);
+    }
+
+    @Override
+    public List<Map<String, Object>> selectMonitoredDbDetail(String md_id) throws Exception {
+        return dbsMapper.selectMonitoredDbDetail(md_id);
     }
     
 }

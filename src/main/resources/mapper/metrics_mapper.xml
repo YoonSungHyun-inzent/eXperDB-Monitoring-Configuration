@@ -1,21 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.experdb.configuration.mapper.MatricsMapper">
-    <select id="selectMetrics" resultType="hashMap">
+    <select id="selectMetrics" parameterType="hashMap" resultType="hashMap">
         select
           m_id, m_name, m_pg_version_from, m_sql, m_sql_su, coalesce(m_comment, '') as m_comment, m_is_active, m_is_helper,
           date_trunc('second', m_last_modified_on::timestamp) as m_last_modified_on, m_master_only, m_standby_only,
           coalesce(m_column_attrs::text, '') as m_column_attrs, coalesce(ma_metric_attrs::text, '') as ma_metric_attrs
         from
-          pgwatch2.metric
+          experdb.metric
           left join
-          pgwatch2.metric_attribute on (ma_metric_name = m_name)
+          experdb.metric_attribute on (ma_metric_name = m_name)
+        <if test="size > 0"> 
+          <trim prefix="WHERE" prefixOverrides="AND"> 
+            <if test="m_name != null and m_name !=''"> 
+              m_name LIKE CONCAT('%', #{m_name}, '%')
+            </if> 
+            <if test="m_pg_version_from != null and m_pg_version_from !=''">
+              AND m_pg_version_from = #{m_pg_version_from}::integer
+            </if> 
+            <if test="m_sql != null and m_sql !=''"> 
+              AND m_sql LIKE CONCAT('%', #{m_sql}, '%')
+            </if> 
+            <if test="m_sql_su != null and m_sql_su !=''"> 
+              AND m_sql_su LIKE CONCAT('%', #{m_sql_su}, '%')
+            </if> 
+            <if test="m_comment != null and m_comment !=''"> 
+              AND m_comment LIKE CONCAT('%', #{m_comment}, '%')
+            </if> 
+            <if test="ma_metric_attrs != null and ma_metric_attrs !=''"> 
+              AND ma_metric_attrs::text LIKE CONCAT('%', #{ma_metric_attrs}, '%')
+            </if> 
+          </trim> 
+        </if> 
+        order by
+          m_is_active desc, m_name, m_pg_version_from
+    </select>
+    <select id="selectMetricsDetail" parameterType="hashMap" resultType="hashMap">
+        select
+          m_id, m_name, m_pg_version_from, m_sql, m_sql_su, coalesce(m_comment, '') as m_comment, m_is_active, m_is_helper,
+          date_trunc('second', m_last_modified_on::timestamp) as m_last_modified_on, m_master_only, m_standby_only,
+          coalesce(m_column_attrs::text, '') as m_column_attrs, coalesce(ma_metric_attrs::text, '') as ma_metric_attrs
+        from
+          experdb.metric
+          left join
+          experdb.metric_attribute on (ma_metric_name = m_name)
+        where
+          m_id = #{m_id} :: integer
         order by
           m_is_active desc, m_name, m_pg_version_from
     </select>
     <insert id="insertMetric" parameterType="hashMap">
         insert into
-          pgwatch2.metric (m_name, m_pg_version_from, m_sql, m_sql_su, m_comment, m_is_active, m_is_helper, m_master_only, m_standby_only, m_column_attrs)
+          experdb.metric (m_name, m_pg_version_from, m_sql, m_sql_su, m_comment, m_is_active, m_is_helper, m_master_only, m_standby_only, m_column_attrs)
         values
           <choose>
             <when test="m_column_attrs != null and !m_column_attrs.equals('')">
@@ -28,14 +64,14 @@
 
           <if test="ma_metric_attrs != null and !ma_metric_attrs.equals('')">
               insert into
-                pgwatch2.metric_attribute (ma_metric_name, ma_metric_attrs)
+                experdb.metric_attribute (ma_metric_name, ma_metric_attrs)
               select
                 #{m_name}, #{ma_metric_attrs};
           </if>
     </insert>
     <update id="updateMetric" parameterType="hashMap">
         update
-          pgwatch2.metric
+          experdb.metric
         set
           m_name = #{m_name},
           m_pg_version_from = ${m_pg_version_from},
@@ -61,7 +97,7 @@
           <if test="ma_metric_attrs != null and !ma_metric_attrs.equals('')">
               with q_try_upd as (
                   update
-                    pgwatch2.metric_attribute
+                    experdb.metric_attribute
                   set
                     ma_metric_attrs = to_json(#{ma_metric_attrs} ::json),
                     ma_last_modified_on = now()
@@ -69,7 +105,7 @@
                     ma_metric_name = #{m_name}
                   returning *
               )
-              insert into pgwatch2.metric_attribute (ma_metric_name, ma_metric_attrs)
+              insert into experdb.metric_attribute (ma_metric_name, ma_metric_attrs)
               select
                 #{m_name},
                 to_json(#{ma_metric_attrs} ::json)
@@ -78,40 +114,10 @@
           </if>
     </update>
     <delete id="deleteMetric" parameterType="hashMap">
-      delete from pgwatch2.metric where m_id = ${m_id};
+      delete from experdb.metric where m_id = ${m_id};
 
-      delete from pgwatch2.metric_attribute
+      delete from experdb.metric_attribute
         where ma_metric_name = #{m_name}
-        and (select count(*) from pgwatch2.metric where m_name = #{m_name}) = 0
-    </delete>
-    <select id="selectPresetConfigs" resultType="hashMap">
-        select
-          pc_name, pc_description, pc_config::text, date_trunc('second', pc_last_modified_on)::text as pc_last_modified_on,
-          coalesce((select array_to_string(array_agg(md_unique_name order by md_unique_name), ', ')
-            from pgwatch2.monitored_db where md_preset_config_name = pc_name and md_is_enabled
-            group by md_preset_config_name), '') as active_dbs
-        from
-          pgwatch2.preset_config
-        order by
-          pc_name
-    </select>
-    <insert id="insertPresetConfigs" parameterType="hashMap">
-        insert into
-          pgwatch2.preset_config (pc_name, pc_description, pc_config)
-        values
-          (#{pc_name}, #{pc_description}, to_json(#{pc_config} ::json))
-    </insert>
-    <update id="updatePresetConfigs" parameterType="hashMap">
-        update
-          pgwatch2.preset_config
-        set
-          pc_description = #{pc_description},
-          pc_config = to_json(#{pc_config} ::json),
-          pc_last_modified_on = now()
-        where
-          pc_name = #{pc_name}
-    </update>
-    <delete id="deletePresetConfigs" parameterType="hashMap">
-        delete from pgwatch2.preset_config where pc_name = #{pc_name}
+        and (select count(*) from experdb.metric where m_name = #{m_name}) = 0
     </delete>
 </mapper>

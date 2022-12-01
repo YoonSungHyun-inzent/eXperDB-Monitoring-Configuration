@@ -6,6 +6,7 @@ import java.util.Map;
 
 public interface DbsService {
     public List<Map<String, Object>> selectColumsMonitoredDB() throws Exception; 
+    public List<Map<String, Object>> selectMonitoredDbDetail(String md_id) throws Exception; 
     public List<Map<String, Object>> selectAllMonitoredDB() throws Exception; 
     public List<Map<String, Object>> selectPresetConfig() throws Exception; 
     public int insertMonitoredDb(HashMap<String,Object> map) throws Exception;
