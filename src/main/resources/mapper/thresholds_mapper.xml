@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.experdb.configuration.mapper.ThresholdsMapper">
+    <select id="selectThresholds" resultType="hashMap">
+      select number,stat_name,condition ,warning,critical,use_yn from experdb.threshold_test
+    </select>
+    <insert id="insertThresholds" parameterType="hashMap">
+      insert into
+        experdb.threshold_test (stat_name, condition, warning, critical, use_yn)
+      values
+        (#{stat_name}, #{condition}, #{warning}, #{critical}, #{use_yn})
+    </insert>
+    <update id="updateThresholds" parameterType="hashMap">
+      update
+        experdb.threshold_test
+      set
+        stat_name = #{stat_name},
+        condition = #{condition},
+        warning = #{warning},
+        critical = #{critical},
+        use_yn = #{use_yn}
+      where 
+        number = #{number}::numeric 
+    </update>
+    <delete id="deleteThresholds" parameterType="hashMap">
+      delete from experdb.threshold_test where stat_name = #{stat_name}
+    </delete>
+</mapper>
+
+<!-- select
+pc_name, pc_description, pc_config::text, date_trunc('second', pc_last_modified_on)::text as pc_last_modified_on,
+coalesce((select array_to_string(array_agg(md_unique_name order by md_unique_name), ', ')
+  from experdb.monitored_db where md_preset_config_name = pc_name and md_is_enabled
+  group by md_preset_config_name), '') as active_dbs
+from
+experdb.preset_config
+order by
+pc_name -->
+
+<!-- select* from thres_hold_test -->
+<!-- select stat_name,condition ,warning,critical,use_yn from threshold_test -->
