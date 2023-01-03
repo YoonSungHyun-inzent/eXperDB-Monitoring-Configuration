@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.experdb.configuration.service.serviceInterface.DbsService;
 import com.experdb.configuration.service.serviceInterface.MetricsService;
 import com.experdb.configuration.service.serviceInterface.PresetsService;
+import com.experdb.configuration.service.serviceInterface.ThresholdsService;
 import com.experdb.configuration.util.ConvertJSON;
 
 import lombok.AllArgsConstructor;
@@ -34,6 +35,8 @@ public class ConfigController {
     private DbsService dbsService;
     private MetricsService metricsService;
     private PresetsService presetsService;
+    private ThresholdsService thresholdsService;
+
     
     @RequestMapping(value = "/")
     // public String index(HttpServletRequest request, HttpServletResponse response,@RequestHeader("Cookie") String cookie, Model model) throws Exception {
@@ -64,14 +67,17 @@ public class ConfigController {
         return "presets";
     }
 
+    @RequestMapping(value = "thresholds")
+    public String thresholds(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+        return "thresholds";
+    }
+
     @ResponseBody
     @RequestMapping(value = "/selectColumsMonitoredDB", method = RequestMethod.POST)
     public JSONArray selectColumsMonitoredDB(HttpServletRequest request, HttpServletResponse response,@RequestParam HashMap<String, Object> paramMap, Model model) throws Exception {
         List<Map<String,Object>> dbsList = dbsService.selectColumsMonitoredDB();
         JSONArray dbsJsonArray = ConvertJSON.convertListToJson(dbsList);
-
         // System.out.println("dbsJsonArray :: " + dbsJsonArray.toJSONString());
-        
         return dbsJsonArray;
     }
 
@@ -80,9 +86,7 @@ public class ConfigController {
     public JSONArray selectMonitoredDb(HttpServletRequest request, HttpServletResponse response,@RequestParam HashMap<String, Object> paramMap, Model model) throws Exception {
         List<Map<String,Object>> dbsList = dbsService.selectAllMonitoredDB();
         JSONArray dbsJsonArray = ConvertJSON.convertListToJson(dbsList);
-
         // System.out.println("dbsJsonArray :: " + dbsJsonArray.toJSONString());
-        
         return dbsJsonArray;
     }
 
@@ -93,8 +97,6 @@ public class ConfigController {
 
         List<Map<String,Object>> dbsList = dbsService.selectMonitoredDbDetail(md_id);
         JSONArray dbsJsonArray = ConvertJSON.convertListToJson(dbsList);
-
-
         // System.out.println("dbsJsonArray :: " + paramMap.toString());
         
         return dbsJsonArray;
@@ -249,6 +251,43 @@ public class ConfigController {
         //인정
         result.put("result", preset);
 
+        return result;
+    }
+    @ResponseBody
+    @RequestMapping(value = "/selectThresholds")
+    public JSONArray selectThresholds(HttpServletRequest request, HttpServletResponse response,@RequestParam HashMap<String, Object> paramMap, Model model) throws Exception {
+        List<Map<String, Object>> thresholdList = thresholdsService.selectThresholds();
+        JSONArray thresholdJsonArray = ConvertJSON.convertListToJson(thresholdList);
+        return thresholdJsonArray;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/insertThresholds")
+    public JSONObject insertThresholds(HttpServletRequest request, HttpServletResponse response,@RequestParam HashMap<String, Object> paramMap, Model model) throws Exception {
+        int thresholds = thresholdsService.insertThresholds(paramMap);
+        JSONObject result = new JSONObject();
+        result.put("result", thresholds);
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/updateThresholds")
+    public JSONObject updateThresholds(HttpServletRequest request, HttpServletResponse response,@RequestParam HashMap<String, Object> paramMap, Model model) throws Exception {
+        System.out.println("paramMap" + paramMap.get("number").getClass());
+        int thresholds = thresholdsService.updateThresholds(paramMap);
+        JSONObject result = new JSONObject();
+        System.out.println(paramMap + " ::: " + response);
+        result.put("result", thresholds);
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/deleteThresholds")
+    public JSONObject deleteThresholds(HttpServletRequest request, HttpServletResponse response,@RequestParam HashMap<String, Object> paramMap, Model model) throws Exception {
+        int thresholds = thresholdsService.deleteThresholds(paramMap);
+        JSONObject result = new JSONObject();
+        System.out.println(paramMap + " ::: " + response);
+        result.put("result", thresholds);
         return result;
     }
 

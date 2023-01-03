@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @MapperScan
-public interface ThresholdMapper {
+public interface ThresholdsMapper {
     public List<Map<String, Object>> selectThresholds() throws Exception;
     public int insertThresholds(HashMap<String,Object> map) throws Exception;
     public int updateThresholds(HashMap<String,Object> map) throws Exception;

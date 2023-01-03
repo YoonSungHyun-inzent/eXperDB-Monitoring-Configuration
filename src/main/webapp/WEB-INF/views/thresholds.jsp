@@ -1,13 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
         <%@ page trimDirectiveWhitespaces="true" %>
-
             <!DOCTYPE html>
             <html lang="en">
 
             <head>
                 <meta charset="UTF-8">
-                <title>experDB :: Metrics and preset configs</title>
+                <title>experDB :: Server Event Thresholds</title>
                 <link rel="stylesheet" href="/resources/custom.css">
                 <link rel="stylesheet" href="/resources/css/styles.css">
 
@@ -18,25 +17,19 @@
                     href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
                 <link type="text/css" rel="stylesheet"
                     href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
-
                 <style>
                     .jsgrid-row,
                     .jsgrid-alt-row {
                         height: 60px;
                     }
 
-                    #jsGridPresetConfig .jsgrid-row,
-                    .jsgrid-alt-row {
-                        height: 40px;
-                    }
-
-                    #jsGridMetricDefinitions .jsgrid-table {
+                    #jsGrid .jsgrid-table {
                         border-collapse: separate;
                     }
 
-                    #jsGridMetricDefinitions .jsgrid-grid-body td,
-                    #jsGridMetricDefinitions .jsgrid-grid-header td,
-                    #jsGridMetricDefinitions .jsgrid-grid-header th {
+                    #jsGrid .jsgrid-grid-body td,
+                    #jsGrid .jsgrid-grid-header td,
+                    #jsGrid .jsgrid-grid-header th {
                         border-left: 0;
                         border-top: 0;
                     }
@@ -108,7 +101,7 @@
                 <script type="text/javascript" src="/resources/grid/jsgrid.js?<%=System.currentTimeMillis()%>"></script>
                 <script type="text/javascript" src="/resources/grid/grid.field.custom.js"></script>
                 <script type="text/javascript" src="/resources/common/common_script.js"></script>
-                <script type="text/javascript" src="/resources/presets.js"></script>
+                <script type="text/javascript" src="/resources/thresholds.js"></script>
             </head>
 
             <body class="sb-nav-fixed">
@@ -185,10 +178,10 @@
                 <div id="layoutSidenav_content">
                     <main>
                         <div class="container-fluid px-4">
-                            <h1 class="mt-4">Presets</h1>
+                            <h1 class="mt-4">Server Event Threshold</h1>
                             <ol class="breadcrumb mb-4">
                                 <!-- <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li> -->
-                                <li class="breadcrumb-item active">Preset Configs</li>
+                                <li class="breadcrumb-item active">Server Event Threshold definitions</li>
                             </ol>
                             <%-- <div class="card mb-4">
                                 <div class="card-body">
@@ -198,7 +191,7 @@
                                     .
                                 </div>
                         </div> --%>
-                        <div id="jsGridPreset"></div>
+                        <div id="jsGridThreshold"></div>
                         <%-- <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
@@ -208,6 +201,7 @@
                                 <!-- grid 예정 -->
                             </div>
                 </div> --%>
+                <div id="jsGridThreshold"></div>
                 </div>
                 </main>
                 <footer class="py-4 bg-light mt-auto">
@@ -215,51 +209,13 @@
                         <div class="d-flex align-items-center justify-content-between small">
                             <div class="text-muted">Copyright &copy; eXperDB 2022</div>
                             <!-- <div>
-                                <a href="#">Privacy Policy</a>
-                                &middot;
-                                <a href="#">Terms &amp; Conditions</a>
-                            </div> -->
+                        <a href="#">Privacy Policy</a>
+                        &middot;
+                        <a href="#">Terms &amp; Conditions</a>
+                    </div> -->
                         </div>
                     </div>
                 </footer>
-                </div>
-                </div>
-                <div class="modal fade" id="psModal" tabindex="-1" aria-labelledby="psModalTitle" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="psModalTitle">Preset 등록</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body p-4">
-                                <form id="psModalForm">
-                                    <input type="hidden" id="psModalCategory">
-                                    <!-- 2 column grid layout with text inputs for the first and last names -->
-                                    <div class="form-floating mb-4">
-                                        <input type="text" id="psModalName" name="psModalPcName" class="form-control"
-                                            readonly>
-                                        <label class="form-label" for="psModalUname" style="margin-left: 0px;">Preset
-                                            Name</label>
-                                    </div>
-
-                                    <div class="form-floating mb-4">
-                                        <textarea class="form-control" id="psModalPcDescription"
-                                            name="psModalPcDescription" rows="5"></textarea>
-                                        <label for="floatingInput">Description</label>
-                                    </div>
-
-                                    <div id="jsGridPresetConfig"></div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary btn-block"
-                                    id="psModalFormSubmit">Save</button>
-                                <button type="button" class="btn btn-secondary btn-block"
-                                    data-bs-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </body>
 
