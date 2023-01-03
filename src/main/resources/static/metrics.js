@@ -324,7 +324,7 @@ var initModalMsForm = function(params) {
 		$("#msModalMaMetricAttrs").val(jsonData.ma_metric_attrs);
 
 		$("#msModalMIsActive").prop("checked", jsonData.m_is_active);
-		$("#msModalMIsHelper").prop("checked", jsonData.m_is_hlper);
+		$("#msModalMIsHelper").prop("checked", jsonData.m_is_helper);
 		$("#msModalMMasterOnly").prop("checked", jsonData.m_master_only);
 		$("#msModalMStandbyOnly").prop("checked", jsonData.m_standby_only);
 	});
