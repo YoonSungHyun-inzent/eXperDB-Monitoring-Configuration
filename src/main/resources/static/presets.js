@@ -12,7 +12,6 @@ var UpdateColPos = function(cols) {
 		});
 }
 
-
 var initJsGridPreset = function() {
 	var grid_name = "jsGridPreset";
 

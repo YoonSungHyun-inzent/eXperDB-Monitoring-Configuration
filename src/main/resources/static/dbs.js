@@ -1,3 +1,5 @@
+
+
 var grid_name = "jsGrid";
 
 $(document).ready(function(){
@@ -27,6 +29,16 @@ $(document).ready(function(){
 
 	var Upstream_arr = [];
 
+	function btnActive() {
+		const target = document.getElementById('dbsModalForm',);
+		target.disabled = false;
+		
+	}
+	function btnDisabled() {
+		const target = document.getElementById('dbsModalForm');
+		target.disabled = true;
+	}
+
 	$("#jsGrid").jsGrid({
 		width: "100%",
 		height: "700px",
@@ -34,7 +46,7 @@ $(document).ready(function(){
 		inserting: false,
 		editing: false,
 		sorting: true,
-		paging: false,
+		paging: true,
 		autoload: true,
 
 		rowClick: function(args){
@@ -259,7 +271,7 @@ $(document).ready(function(){
 			// { name: "md_custom_tags", headtitle: "Custom tags", type: "textarea", width: 150, editTemplate: textareaToJSONView},
 			{ name: "md_statement_timeout_seconds", headtitle: "Statement timeout [seconds]", type: "text", width: 100 },
 			// { name: "md_only_if_master", type: "checkbox", headtitle: "Master mode only?", width: 100 },
-			{ name: "md_is_enabled", type: "checkbox", headtitle: "Enabled?	", width: 100 },
+			// { name: "md_is_enabled", type: "checkbox", headtitle: "Enabled", width: 100 },
 			{ name: "ms_upstream_hostname", headtitle: "Upstream", type: "select_custom_shift", items: Upstream_arr, valueField: "value", textField: "name", width: 150 },
 			{ name: "md_last_modified_on", type: "text", width: 200, visible: false }
 		]

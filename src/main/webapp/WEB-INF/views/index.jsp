@@ -103,7 +103,7 @@
                 <script type="text/javascript" src="/resources/grid/jsgrid.js?<%=System.currentTimeMillis()%>"></script>
                 <script type="text/javascript" src="/resources/grid/grid.field.custom.js"></script>
                 <script type="text/javascript" src="/resources/common/common_script.js"></script>
-                <script type="text/javascript" src="/resources/dbs.js"></script>
+                <script type="text/javascript" src="/resources/dbs.js?<%=System.currentTimeMillis()%>"></script>
             </head>
 
             <body class="sb-nav-fixed">
@@ -180,11 +180,22 @@
                 <div id="layoutSidenav_content">
                     <main>
                         <div class="container-fluid px-4">
+                            <span style="float: left;">
                             <h1 class="mt-4">DBs</h1>
                             <ol class="breadcrumb mb-4">
                                 <!-- <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li> -->
                                 <li class="breadcrumb-item active">Databases under monitoring</li>
                             </ol>
+                            </span>
+                            <span style="float: right;">
+                            <select class="form-select" aria-label="Default select example" style="width: 100%; float: right;">
+                                <option selected>Dashboard link</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                              </select>
+                            </span>
+                            
                             <%-- <div class="card mb-4">
                                 <div class="card-body">
                                     수집 대상 데이터 베이스 관리 화면 입니다.
@@ -193,7 +204,7 @@
                                     .
                                 </div>
                         </div> --%>
-                        <div id="jsGrid"></div>
+                        <!-- <div id="jsGrid"></div> -->
                         <%-- <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
@@ -203,6 +214,7 @@
                                 <!-- grid 예정 -->
                             </div>
                 </div> --%>
+                <div id="jsGrid"></div>
                 </div>
                 </main>
                 <footer class="py-4 bg-light mt-auto">
@@ -252,6 +264,10 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="dbsModalTitle">DBs 등록</h5>
+                                <div class="form-check form-switch" style="margin-left: 3%;">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                                    <label class="form-check-label" for="flexSwitchCheckDefault">Enabled</label>
+                                </div>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>

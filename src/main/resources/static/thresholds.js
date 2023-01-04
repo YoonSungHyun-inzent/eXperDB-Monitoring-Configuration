@@ -13,7 +13,7 @@ var UpdateColPos = function(cols) {
 }
 var tableData= new Array();
 
-function testfunc(value) { 
+function overlapCheck(value) { 
 	for (let i = 0; i < tableData.length; i++) {
 		if(tableData[i].stat_name == value){
 			return 1;
@@ -22,6 +22,7 @@ function testfunc(value) {
 		}
 	}
 }
+
 
 var initJsGridThreshold = function() {
 	var grid_name = "jsGridThreshold";
@@ -94,7 +95,7 @@ var initJsGridThreshold = function() {
 			
 			insertItem: function (params) {
 				console.log("params:", params.stat_name);	
-				if(testfunc(params.stat_name)){
+				if(overlapCheck(params.stat_name)){
 					alert('중복된 값이 존재합니다.');	
 					gridRefresh("jsGridThresholds");	
 				}else{

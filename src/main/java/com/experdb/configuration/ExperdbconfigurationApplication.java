@@ -11,5 +11,4 @@ public class ExperdbconfigurationApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ExperdbconfigurationApplication.class, args);
 	}
-
 }
