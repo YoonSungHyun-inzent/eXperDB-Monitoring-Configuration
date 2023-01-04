@@ -195,8 +195,8 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="dbsModalTitle">DBs 등록</h5>
-                                <div class="form-check form-switch" style="margin-left: 3%;">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                                <div class="form-check form-switch" style="margin-left: 4%;">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="enabledCheck" checked>
                                     <label class="form-check-label" for="flexSwitchCheckDefault">Enabled</label>
                                 </div>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -372,7 +372,7 @@
                                             <h2 class="accordion-header" id="dbsModalHeadingOne">
                                                 <button class="accordion-button collapsed" type="button"
                                                     data-bs-toggle="collapse" data-bs-target="#dbsModalCollapseOne"
-                                                    aria-expanded="false" aria-controls="dbsModalCollapseOne">
+                                                    aria-expanded="false" aria-controls="dbsModalCollapseOne" id="dbsModalSSLOption1">
                                                     SSL Option #1
                                                 </button>
                                             </h2>
@@ -412,7 +412,7 @@
                                             <h2 class="accordion-header" id="dbsModalHeadingOne2">
                                                 <button class="accordion-button collapsed" type="button"
                                                     data-bs-toggle="collapse" data-bs-target="#dbsModalCollapseOne2"
-                                                    aria-expanded="false" aria-controls="dbsModalCollapseOne2">
+                                                    aria-expanded="false" aria-controls="dbsModalCollapseOne2" id="dbsModalCustomOption1">
                                                     Custom Option #1
                                                 </button>
                                             </h2>

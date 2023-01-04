@@ -2,42 +2,40 @@
 
 var grid_name = "jsGrid";
 
-$(document).ready(function(){
+$(document).ready(function () {
 	$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", true);
 
 	var db_type_arr = [
-		{name: "postgres", value: "postgres"},
-		{name: "postgres-continuous-discovery", value: "postgres-continuous-discovery"},
-		{name: "pgbouncer", value: "pgbouncer"},
-		{name: "pgpool", value: "pgpool"},
-		{name: "patroni", value: "patroni"},
-		{name: "patroni-continuous-discovery", value: "patroni-continuous-discovery"},
-		{name: "patroni-namespace-discovery", value: "patroni-namespace-discovery"}
+		{ name: "postgres", value: "postgres" },
+		{ name: "postgres-continuous-discovery", value: "postgres-continuous-discovery" },
+		{ name: "pgbouncer", value: "pgbouncer" },
+		{ name: "pgpool", value: "pgpool" },
+		{ name: "patroni", value: "patroni" },
+		{ name: "patroni-continuous-discovery", value: "patroni-continuous-discovery" },
+		{ name: "patroni-namespace-discovery", value: "patroni-namespace-discovery" }
 	];
 
 	var enc_type_arr = [
-		{name: "plain-text", value: "plain-text"},
-		{name: "aes-gcm-256", value: "aes-gcm-256"}
+		{ name: "plain-text", value: "plain-text" },
+		{ name: "aes-gcm-256", value: "aes-gcm-256" }
 	];
 
 	var ssl_mode_arr = [
-		{name: "disable", value: "disable"},
-		{name: "require", value: "require"},
-		{name: "verify-ca", value: "verify-ca"},
-		{name: "verify-full", value: "verify-full"}
+		{ name: "disable", value: "disable" },
+		{ name: "require", value: "require" },
+		{ name: "verify-ca", value: "verify-ca" },
+		{ name: "verify-full", value: "verify-full" }
 	];
 
 	var Upstream_arr = [];
 
-	function btnActive() {
-		const target = document.getElementById('dbsModalForm',);
-		target.disabled = false;
-		
-	}
-	function btnDisabled() {
-		const target = document.getElementById('dbsModalForm');
-		target.disabled = true;
-	}
+	$("#enabledCheck").click(function () {
+		if (this.checked) {
+			$("#dbsModalDBtype,#dbsModalHostName,#dbsModalPort,#dbsModalDbName,#dbsModalDbUserName,#dbsModalDbPassword,#dbsModalDbPasswordType,#dbsModalUpstream,#dbsModalSts,#dbsModalPresetConfig,#dbsModalPresetConfig2,#dbsModalGroup,#dbsModalSSLOption1,#dbsModalCustomOption1").prop("disabled", false);
+		} else {
+			$("#dbsModalDBtype,#dbsModalHostName,#dbsModalPort,#dbsModalDbName,#dbsModalDbUserName,#dbsModalDbPassword,#dbsModalDbPasswordType,#dbsModalUpstream,#dbsModalSts,#dbsModalPresetConfig,#dbsModalPresetConfig2,#dbsModalGroup,#dbsModalSSLOption1,#dbsModalCustomOption1").prop("disabled", true);
+		}
+	})
 
 	$("#jsGrid").jsGrid({
 		width: "100%",
@@ -49,8 +47,8 @@ $(document).ready(function(){
 		paging: true,
 		autoload: true,
 
-		rowClick: function(args){
-			if(this.editing) {
+		rowClick: function (args) {
+			if (this.editing) {
 				this.editItem($(args.event.target).closest("tr"));
 			}
 
@@ -71,7 +69,7 @@ $(document).ready(function(){
 			// $("#copy_metrics_dialog").dialog("close");
 		},
 
-		deleteConfirm: function(item) {
+		deleteConfirm: function (item) {
 			return "\"" + item.md_unique_name + "\" 삭제하시겠습니까?";
 		},
 
@@ -84,16 +82,16 @@ $(document).ready(function(){
 		onRefreshed: function (args) {
 			UpdateColPos(3);
 		},
-		onDataLoaded: function(args) {
+		onDataLoaded: function (args) {
 			var modalSelectBox = document.getElementById("dbsModalUpstream");
 			// var modalSelectBox = args.grid._insertRow[0].cells[28].getElementsByTagName("select")[0];
 
 			Upstream_arr.length = 0;
 
 			modalSelectBox.options[0] = new Option("", "");
-			Upstream_arr.push({"name":"","value":""});
+			Upstream_arr.push({ "name": "", "value": "" });
 
-			$.each(args.data, function(key, value){
+			$.each(args.data, function (key, value) {
 				var tempUpstream_arr = {};
 				var temp_arr = value;
 
@@ -102,21 +100,21 @@ $(document).ready(function(){
 
 				Upstream_arr.push(tempUpstream_arr);
 
-				modalSelectBox.options[key+1] = new Option(temp_arr.md_hostname, temp_arr.md_hostname);
+				modalSelectBox.options[key + 1] = new Option(temp_arr.md_hostname, temp_arr.md_hostname);
 			});
 
 			// args.grid.option('fields')[29].items = Upstream_arr;
 		},
 
 		controller: {
-			loadData: function() {
+			loadData: function () {
 				var d = $.Deferred();
 
 				$.ajax({
 					url: "/selectMonitoredDb",
-					type : "post",
+					type: "post",
 					dataType: "json"
-				}).done(function(response) {
+				}).done(function (response) {
 					console.log(response);
 					d.resolve(response);
 				});
@@ -189,29 +187,29 @@ $(document).ready(function(){
 			// },
 			deleteItem: function (params) {
 				return $.ajax({
-					url : "/deleteMonitoredDb",
-					data : params,
+					url: "/deleteMonitoredDb",
+					data: params,
 					// dataType : "json",
-					type : "post",
-					async : false,
-					error : function(xhr, status, error) {
-						if(xhr.status == 401) {
+					type: "post",
+					async: false,
+					error: function (xhr, status, error) {
+						if (xhr.status == 401) {
 							alert(message_msg02);
 							top.location.href = "/";
-						} else if(xhr.status == 403) {
+						} else if (xhr.status == 403) {
 							alert(message_msg03);
 							top.location.href = "/";
 						} else {
-							alert("ERROR CODE : "+ xhr.status+ "\n\n"+ "ERROR Message : "+ error+ "\n\n"+ "Error Detail : "+ xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
+							alert("ERROR CODE : " + xhr.status + "\n\n" + "ERROR Message : " + error + "\n\n" + "Error Detail : " + xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
 						}
 					},
-					beforeSend: function(xhr) {
+					beforeSend: function (xhr) {
 						xhr.setRequestHeader("AJAX", true);
-					 },
-					success : function(result) {
-						if(result.length==0){
+					},
+					success: function (result) {
+						if (result.length == 0) {
 							alert("삭제 실패");
-						}else{
+						} else {
 							alert("삭제 완료");
 
 							gridRefresh();
@@ -236,8 +234,9 @@ $(document).ready(function(){
 			},
 			{ name: "md_id", headtitle: "ID", width: 80 },
 			{ name: "md_unique_name", headtitle: "Unique name", type: "text", width: 200 },
-			{ name: "md_dbtype", headtitle: "DB type", type: "select", items: db_type_arr, valueField: "value", textField: "name", width: 100
-					// editTemplate: dbTypeEditTemplate
+			{
+				name: "md_dbtype", headtitle: "DB type", type: "select", items: db_type_arr, valueField: "value", textField: "name", width: 100
+				// editTemplate: dbTypeEditTemplate
 			},
 			{ name: "md_hostname", headtitle: "DB host", type: "text", width: 140 },
 			{ name: "md_port", headtitle: "DB port", type: "text", width: 80 },
@@ -248,12 +247,12 @@ $(document).ready(function(){
 			// { name: "md_password", headtitle: "DB password", type: "password", width: 80 },
 			// { name: "md_password_type", headtitle: "Password encryption", type: "select", items: enc_type_arr, valueField: "value", textField: "name", width: 100 },
 			// { name: "md_is_superuser", headtitle: "Auto-create helpers?", type: "checkbox", width: 80, visible: false },
-			{ name: "md_sslmode", headtitle: "SSL Mode", type: "select", items: ssl_mode_arr, valueField: "value", textField: "name", width: 130},
+			{ name: "md_sslmode", headtitle: "SSL Mode", type: "select", items: ssl_mode_arr, valueField: "value", textField: "name", width: 130 },
 			// { name: "md_root_ca_path", headtitle: "Root CA", type: "text", width: 100 },
 			// { name: "md_client_cert_path", headtitle: "Client cert", type: "text", width: 100 },
 			// { name: "md_client_key_path", headtitle: "Client key", type: "text", width: 100 },
 			{ name: "md_group", headtitle: "Group", type: "text", width: 80 },
-			{ name: "md_preset_config_name", headtitle: "Preset metrics config", type: "select", items: preset_configs_names, valueField: "value", textField: "name", width: 200},
+			{ name: "md_preset_config_name", headtitle: "Preset metrics config", type: "select", items: preset_configs_names, valueField: "value", textField: "name", width: 200 },
 			// { name: "md_preset_config_button", headtitle:"Preset metrics show/copy",width: 100 ,align: "center", type: "contorl", idx: "1",
 			// 		ieditButton: false, deleteButton: false,
 			// 		insertTemplate: presetMetricsButton,
@@ -319,18 +318,18 @@ $(document).ready(function(){
 	// 	}
 	// });
 
-	$("#dbsModalSslMode").change(function() {
-		if(this.value != "disable")
-			$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled",false);
+	$("#dbsModalSslMode").change(function () {
+		if (this.value != "disable")
+			$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", false);
 		else
-			$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled",true);
+			$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", true);
 	});
-	
-	$("#dbsModalFormSubmit").click(function() {
+
+	$("#dbsModalFormSubmit").click(function () {
 		var params = changeSnakeCase($("#dbsModalForm").serializeArray());
 		var dbsModalMode = $("#dbsModalCategory").val();
-		var requestUrls = (dbsModalMode ?? "") == "ADD" ? "/insertMonitoredDb" : ((dbsModalMode ?? "") == "EDIT" ? "/updateMonitoredDb" : "" ) ; 
-		var returnMsg = (dbsModalMode ?? "") == "ADD" ? "등록" : ((dbsModalMode ?? "") == "EDIT" ? "수정" : "" ) ; 
+		var requestUrls = (dbsModalMode ?? "") == "ADD" ? "/insertMonitoredDb" : ((dbsModalMode ?? "") == "EDIT" ? "/updateMonitoredDb" : "");
+		var returnMsg = (dbsModalMode ?? "") == "ADD" ? "등록" : ((dbsModalMode ?? "") == "EDIT" ? "수정" : "");
 
 		var forms = document.querySelectorAll('.needs-validation')
 
@@ -339,35 +338,35 @@ $(document).ready(function(){
 			if (!form.checkValidity()) {
 				console.log('no');
 				form.classList.add('was-validated');
-			}else {
+			} else {
 				form.classList.remove('was-validated');
 				console.log('yes');
 				$.ajax({
-					url : requestUrls,
-					data : params,
+					url: requestUrls,
+					data: params,
 					//dataType : "json",
-					type : "post",
-					async : false,
-					error : function(xhr, status, error) {
-						if(xhr.status == 401) {
+					type: "post",
+					async: false,
+					error: function (xhr, status, error) {
+						if (xhr.status == 401) {
 							alert(message_msg02);
 							top.location.href = "/";
-						} else if(xhr.status == 403) {
+						} else if (xhr.status == 403) {
 							alert(message_msg03);
 							top.location.href = "/";
 						} else {
-							alert("ERROR CODE : "+ xhr.status+ "\n\n"+ "ERROR Message : "+ error+ "\n\n"+ "Error Detail : "+ xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
+							alert("ERROR CODE : " + xhr.status + "\n\n" + "ERROR Message : " + error + "\n\n" + "Error Detail : " + xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
 						}
 					},
-					beforeSend: function(xhr) {
+					beforeSend: function (xhr) {
 						xhr.setRequestHeader("AJAX", true);
-					 },
-					success : function(result) {
-						if(result.length==0){
+					},
+					success: function (result) {
+						if (result.length == 0) {
 							alert(returnMsg + " 실패");
-						}else{
+						} else {
 							alert(returnMsg + " 완료");
-		
+
 							gridRefresh();
 							$("#dbsModal").modal('hide');
 						}
@@ -538,16 +537,16 @@ function openDbsModal(category, id) {
 	$("#dbsModalAccordionFlush .accordion-item div").collapse('hide');
 	$("#dbsModalUpstream option").show();
 
-	if(category == "ADD"){
+	if (category == "ADD") {
 		$("#dbsModalTitle").text("DBs 등록");
 		$("#dbsModalUname").prop("disabled", false);
-		$("#dbsModalDbPassword").prop ('required',true);
+		$("#dbsModalDbPassword").prop('required', true);
 		$("#dbsModal").modal('show');
 	}
-	else if(category == "EDIT"){
+	else if (category == "EDIT") {
 		$("#dbsModalTitle").text("DBs 수정");
 		$("#dbsModalId").val(id);
-		$("#dbsModalDbPassword").prop ('required',false);
+		$("#dbsModalDbPassword").prop('required', false);
 		$("#dbsModalUname").prop("disabled", true);
 		selectMonitoredDbDetail(id);
 	}
@@ -555,26 +554,26 @@ function openDbsModal(category, id) {
 
 function selectMonitoredDbDetail(id) {
 	$.ajax({
-		url : "/selectMonitoredDbDetail",
-		data : "md_id=" + id,
+		url: "/selectMonitoredDbDetail",
+		data: "md_id=" + id,
 		//dataType : "json",
-		type : "get",
-		async : false,
-		error : function(xhr, status, error) {
-			if(xhr.status == 401) {
+		type: "get",
+		async: false,
+		error: function (xhr, status, error) {
+			if (xhr.status == 401) {
 				alert(message_msg02);
 				top.location.href = "/";
-			} else if(xhr.status == 403) {
+			} else if (xhr.status == 403) {
 				alert(message_msg03);
 				top.location.href = "/";
 			} else {
-				alert("ERROR CODE : "+ xhr.status+ "\n\n"+ "ERROR Message : "+ error+ "\n\n"+ "Error Detail : "+ xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
+				alert("ERROR CODE : " + xhr.status + "\n\n" + "ERROR Message : " + error + "\n\n" + "Error Detail : " + xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
 			}
 		},
-		beforeSend: function(xhr) {
+		beforeSend: function (xhr) {
 			xhr.setRequestHeader("AJAX", true);
-		 },
-		success : function(result) {
+		},
+		success: function (result) {
 			console.log(result);
 
 			initModalDbsForm(result);
@@ -583,9 +582,9 @@ function selectMonitoredDbDetail(id) {
 }
 
 function initModalDbsForm(params) {
-	$.each(params, function(i, data){
+	$.each(params, function (i, data) {
 		var jsonData = data;
-		
+
 		$("#dbsModalUname").val(jsonData.md_unique_name);
 		$("#dbsModalSts").val(jsonData.md_statement_timeout_seconds);
 		$("#dbsModalHostName").val(jsonData.md_hostname);
@@ -606,7 +605,7 @@ function initModalDbsForm(params) {
 		$("#dbsModalUpstream option[value='" + jsonData.md_hostname + "']").hide();
 		$("#dbsModalPresetConfig").val(jsonData.md_preset_config_name);
 		$("#dbsModalPresetConfig2").val(jsonData.md_preset_config_name_standby);
-		
+
 		$("#dbsModalSslMode").val(jsonData.md_sslmode);
 		$("#dbsModalRootCaPath").val(jsonData.md_root_ca_path);
 		$("#dbsModalCcp").val(jsonData.md_client_cert_path);
@@ -614,7 +613,7 @@ function initModalDbsForm(params) {
 
 		var flagSslMode = jsonData.md_sslmode === "disable";
 
-		$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", flagSslMode );
+		$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", flagSslMode);
 	});
 
 	$("#dbsModal").modal('show');
@@ -626,24 +625,21 @@ function saveClient(client, isNew, grid, arridx_target) {
 	var rowSize = targetTbl.find('tbody > tr').length;
 	var colSize = targetTbl.find('tbody > tr:first').children().length;
 
-	if(rowSize < 1)
-	{
-		 alert("테이블에 데이터가 없습니다!");
-		 return;
+	if (rowSize < 1) {
+		alert("테이블에 데이터가 없습니다!");
+		return;
 	}
 
 	var objArr = new Array();      // 하나의 JSON Object (행)을 저장할 배열 변수
 	var tr, th, td;
 	var obj = new Object();
-	for(var i = 0; i < rowSize; i++)
-	{
+	for (var i = 0; i < rowSize; i++) {
 		tr = targetTbl.find('tbody').find('tr:eq(' + i + ')');
 
-		for(var j = 0; j < colSize; j++)
-		{
-			if(tr.children().eq(j).prop("tagName") == 'TH')
+		for (var j = 0; j < colSize; j++) {
+			if (tr.children().eq(j).prop("tagName") == 'TH')
 				th = tr.children().eq(j).text();
-			else if(tr.children().eq(j).prop("tagName") == 'TD')
+			else if (tr.children().eq(j).prop("tagName") == 'TD')
 				td = tr.children().eq(j).find('input').val()
 		}
 
@@ -658,13 +654,13 @@ function saveClient(client, isNew, grid, arridx_target) {
 function changeSnakeCase(params) {
 	var changeArr = [];
 
-	$.each(params, function(i, v) {
+	$.each(params, function (i, v) {
 		var tempObject = {};
 		var tempName = v.name;
 
-		tempName = tempName.replace("dbsModal", "").replace(/([A-Z])/g, function(arg){
-			            return "_"+arg.toLowerCase();
-			    }).replace("_", "");
+		tempName = tempName.replace("dbsModal", "").replace(/([A-Z])/g, function (arg) {
+			return "_" + arg.toLowerCase();
+		}).replace("_", "");
 
 		tempObject['name'] = tempName;
 		tempObject['value'] = v.value;
@@ -694,7 +690,7 @@ function UpdateColPos(cols) {
 		});
 }
 
-function gridRefresh(){
+function gridRefresh() {
 	$("#" + grid_name).jsGrid("option", "inserting", false);
 	$("#" + grid_name).jsGrid("loadData");
 	$("#" + grid_name + " > .jsgrid-grid-body").scrollTop(0);
