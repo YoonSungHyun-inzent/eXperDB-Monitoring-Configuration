@@ -29,13 +29,7 @@ $(document).ready(function () {
 
 	var Upstream_arr = [];
 
-	$("#enabledCheck").click(function () {
-		if (this.checked) {
-			$("#dbsModalDBtype,#dbsModalHostName,#dbsModalPort,#dbsModalDbName,#dbsModalDbUserName,#dbsModalDbPassword,#dbsModalDbPasswordType,#dbsModalUpstream,#dbsModalSts,#dbsModalPresetConfig,#dbsModalPresetConfig2,#dbsModalGroup,#dbsModalSSLOption1,#dbsModalCustomOption1").prop("disabled", false);
-		} else {
-			$("#dbsModalDBtype,#dbsModalHostName,#dbsModalPort,#dbsModalDbName,#dbsModalDbUserName,#dbsModalDbPassword,#dbsModalDbPasswordType,#dbsModalUpstream,#dbsModalSts,#dbsModalPresetConfig,#dbsModalPresetConfig2,#dbsModalGroup,#dbsModalSSLOption1,#dbsModalCustomOption1").prop("disabled", true);
-		}
-	})
+
 
 	$("#jsGrid").jsGrid({
 		width: "100%",
@@ -115,7 +109,7 @@ $(document).ready(function () {
 					type: "post",
 					dataType: "json"
 				}).done(function (response) {
-					console.log(response);
+					console.log("테이블 값", response);
 					d.resolve(response);
 				});
 
@@ -270,7 +264,7 @@ $(document).ready(function () {
 			// { name: "md_custom_tags", headtitle: "Custom tags", type: "textarea", width: 150, editTemplate: textareaToJSONView},
 			{ name: "md_statement_timeout_seconds", headtitle: "Statement timeout [seconds]", type: "text", width: 100 },
 			// { name: "md_only_if_master", type: "checkbox", headtitle: "Master mode only?", width: 100 },
-			// { name: "md_is_enabled", type: "checkbox", headtitle: "Enabled", width: 100 },
+			{ name: "md_is_enabled", type: "checkbox", headtitle: "Enabled", width: 100, visible: false },
 			{ name: "ms_upstream_hostname", headtitle: "Upstream", type: "select_custom_shift", items: Upstream_arr, valueField: "value", textField: "name", width: 150 },
 			{ name: "md_last_modified_on", type: "text", width: 200, visible: false }
 		]
@@ -319,10 +313,12 @@ $(document).ready(function () {
 	// });
 
 	$("#dbsModalSslMode").change(function () {
-		if (this.value != "disable")
+		if (this.value != "disable") {
 			$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", false);
-		else
+			console.log("111111");
+		} else
 			$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", true);
+		console.log("22222");
 	});
 
 	$("#dbsModalFormSubmit").click(function () {
@@ -366,7 +362,7 @@ $(document).ready(function () {
 							alert(returnMsg + " 실패");
 						} else {
 							alert(returnMsg + " 완료");
-
+							console.log("완료", result);
 							gridRefresh();
 							$("#dbsModal").modal('hide');
 						}
@@ -374,9 +370,7 @@ $(document).ready(function () {
 				});
 			}
 		});
-
 	});
-
 });
 
 // var dbTypeEditTemplate = function (value, item) {
@@ -533,7 +527,6 @@ function openDbsModal(category, id) {
 	$("#dbsModalForm")[0].reset();
 	$("#dbsModalCategory").val(category);
 	$("#dbsModalForm").removeClass("was-validated");
-
 	$("#dbsModalAccordionFlush .accordion-item div").collapse('hide');
 	$("#dbsModalUpstream option").show();
 
@@ -541,15 +534,20 @@ function openDbsModal(category, id) {
 		$("#dbsModalTitle").text("DBs 등록");
 		$("#dbsModalUname").prop("disabled", false);
 		$("#dbsModalDbPassword").prop('required', true);
+		$("#enabled").hide();
 		$("#dbsModal").modal('show');
+		
 	}
 	else if (category == "EDIT") {
 		$("#dbsModalTitle").text("DBs 수정");
 		$("#dbsModalId").val(id);
 		$("#dbsModalDbPassword").prop('required', false);
 		$("#dbsModalUname").prop("disabled", true);
+		$("#enabled").fadeIn();
 		selectMonitoredDbDetail(id);
+		console.log("edit ID값", id);
 	}
+	
 }
 
 function selectMonitoredDbDetail(id) {
@@ -574,16 +572,42 @@ function selectMonitoredDbDetail(id) {
 			xhr.setRequestHeader("AJAX", true);
 		},
 		success: function (result) {
-			console.log(result);
-
+			console.log("결과값 : ", result);
+			$("#dbsModal").modal('show');
 			initModalDbsForm(result);
-		}
+		},
 	});
 }
 
 function initModalDbsForm(params) {
+
 	$.each(params, function (i, data) {
 		var jsonData = data;
+
+		var enabledCheck_value = $("#enabledCheck").attr("value") || jsonData.md_is_enabled;
+
+		console.log("enabledCheck_value : ",Boolean(enabledCheck_value));
+		console.log("jsonData.md_is_enabled : " ,jsonData.md_is_enabled);
+		console.log("비교값 : ",Boolean(enabledCheck_value) != jsonData.md_is_enabled);
+		console.log("----------------")
+		$("#enabledCheck").click(function () {
+			if (this.checked) {
+				jsonData.md_is_enabled=this.checked;
+				$("#dbsModalForm input").prop("disabled", false);
+				$("#dbsModalForm select").prop("disabled", false);
+				$("#dbsModalForm button").prop("disabled", false);
+				$("#dbsModalForm textarea").prop("disabled", false);
+				$("#dbsModalUname").prop("disabled", true);
+				console.log("md_is_enabled true일때",jsonData.md_is_enabled);
+			} else {
+				jsonData.md_is_enabled=this.checked;
+				$("#dbsModalForm input").prop("disabled", true);
+				$("#dbsModalForm select").prop("disabled", true);
+				$("#dbsModalForm button").prop("disabled", true);
+				$("#dbsModalForm textarea").prop("disabled", true);	
+				console.log("md_is_enabled false일때",jsonData.md_is_enabled);
+			}
+		})
 
 		$("#dbsModalUname").val(jsonData.md_unique_name);
 		$("#dbsModalSts").val(jsonData.md_statement_timeout_seconds);
@@ -592,29 +616,30 @@ function initModalDbsForm(params) {
 		$("#dbsModalDbName").val(jsonData.md_dbname);
 		$("#dbsModalDbUserName").val(jsonData.md_user);
 		$("#dbsModalGroup").val(jsonData.md_group);
-		// $("#dbsModalDbPassword").val(jsonData.);
-
+		// $("#dbsModalDbPassword").val(jsonData.md_password);
 		$("#dbsModalCustomTags").val(jsonData.md_custom_tags);
 		$("#dbsModalHostConfig").val(jsonData.md_host_config);
 		$("#dbsModalConfig").val(jsonData.md_config);
 		$("#dbsModalConfig2").val(jsonData.md_config_standby);
-
 		$("#dbsModalDBtype").val(jsonData.md_dbtype);
 		$("#dbsModalDbPasswordType").val(jsonData.md_password_type);
 		$("#dbsModalUpstream").val(jsonData.ms_upstream_hostname);
 		$("#dbsModalUpstream option[value='" + jsonData.md_hostname + "']").hide();
 		$("#dbsModalPresetConfig").val(jsonData.md_preset_config_name);
 		$("#dbsModalPresetConfig2").val(jsonData.md_preset_config_name_standby);
-
 		$("#dbsModalSslMode").val(jsonData.md_sslmode);
 		$("#dbsModalRootCaPath").val(jsonData.md_root_ca_path);
 		$("#dbsModalCcp").val(jsonData.md_client_cert_path);
 		$("#dbsModalCkp").val(jsonData.md_client_key_path);
+		$("#enabledCheck").val(jsonData.md_is_enabled);
 
-		var flagSslMode = jsonData.md_sslmode === "disable";
-
+		var flagSslMode = jsonData.md_sslmode === "disabled";
 		$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", flagSslMode);
+		
+
 	});
+
+
 
 	$("#dbsModal").modal('show');
 }
@@ -642,7 +667,6 @@ function saveClient(client, isNew, grid, arridx_target) {
 			else if (tr.children().eq(j).prop("tagName") == 'TD')
 				td = tr.children().eq(j).find('input').val()
 		}
-
 		obj[th] = td;
 	}
 
@@ -696,3 +720,4 @@ function gridRefresh() {
 	$("#" + grid_name + " > .jsgrid-grid-body").scrollTop(0);
 	$("#" + grid_name + " > .jsgrid-grid-body").scrollLeft(0);
 }
+

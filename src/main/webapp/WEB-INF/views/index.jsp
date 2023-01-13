@@ -195,7 +195,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="dbsModalTitle">DBs 등록</h5>
-                                <div class="form-check form-switch" style="margin-left: 4%;">
+                                <div class="form-check form-switch" style="margin-left: 4%;" id="enabled">
                                     <input class="form-check-input" type="checkbox" role="switch" id="enabledCheck" checked>
                                     <label class="form-check-label" for="flexSwitchCheckDefault">Enabled</label>
                                 </div>
@@ -207,7 +207,9 @@
                                     <input type="hidden" id="dbsModalCategory">
                                     <input type="hidden" id="dbsModalId" name="dbsModalMdId">
                                     <!-- 2 column grid layout with text inputs for the first and last names -->
+                                    
                                     <div class="row mb-4">
+                                        
                                         <div class="col">
                                             <div class="form-floating">
                                                 <input type="text" id="dbsModalUname" name="dbsModalMdUniqueName"
@@ -237,6 +239,7 @@
                                     </div>
 
                                     <div class="row mb-4">
+                                       
                                         <div class="col">
                                             <div class="form-floating">
                                                 <input type="text" id="dbsModalHostName" name="dbsModalMdHostname"
@@ -321,7 +324,7 @@
                                             </div>
                                         </div>
                                     </div>
-
+                                    
                                     <div class="row mb-4">
                                         <div class="col">
                                             <div class="form-floating">

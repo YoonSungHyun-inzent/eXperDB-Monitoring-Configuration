@@ -170,8 +170,9 @@ public class ConfigController {
         JSONObject result = new JSONObject();
 
         result.put("result", i);
-
+        System.out.println(result);
         return result;
+        
     }
 
     @ResponseBody

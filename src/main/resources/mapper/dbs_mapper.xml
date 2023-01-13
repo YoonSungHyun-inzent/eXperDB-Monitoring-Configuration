@@ -65,6 +65,7 @@
           md_client_cert_path,
           md_client_key_path,
           md_preset_config_name,
+          md_is_enabled,
           md_preset_config_name_standby,
           coalesce(md_config::text, '') as md_config,
           coalesce(md_config_standby::text, '') as md_config_standby,
@@ -138,6 +139,7 @@
           md_client_key_path = #{md_client_key_path},
           </if>
           md_dbtype = #{md_dbtype},
+          md_is_enabled= #{md_is_enabled},
           md_preset_config_name = #{md_preset_config_name},
           md_preset_config_name_standby = #{md_preset_config_name_standby},
           md_config = to_json(#{md_config} ::json),
@@ -150,7 +152,6 @@
           q_old
         where
           new.md_id = #{md_id} :: integer;
-
         update
           experdb.monitored_server
         set
