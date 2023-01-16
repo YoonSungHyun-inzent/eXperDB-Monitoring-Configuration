@@ -47,7 +47,8 @@
         on
           a.md_hostname = b.ms_hostname
         order by
-          md_is_enabled desc, md_id
+        md_id asc
+          <!-- md_is_enabled desc -->
     </select>
     <select id="selectMonitoredDbDetail" resultType="hashMap">
         select

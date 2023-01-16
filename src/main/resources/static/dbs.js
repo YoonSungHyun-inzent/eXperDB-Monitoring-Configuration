@@ -366,7 +366,6 @@ $(document).ready(function () {
 							alert(returnMsg + " 실패");
 						} else {
 							alert(returnMsg + " 완료");
-							console.log("완료", params);
 							gridRefresh();
 							$("#dbsModal").modal('hide');
 						}
@@ -608,14 +607,15 @@ function initModalDbsForm(params) {
 		var jsonData = data;
 
 		var enabledCheck_value = $("#enabledCheck").attr("value");
-
+		
 		console.log("enabledCheck_value : ",enabledCheck_value);
 		console.log("jsonData.md_is_enabled : " ,String(jsonData.md_is_enabled));
 		console.log("클릭했다? : ",enabledCheck_value != String(jsonData.md_is_enabled));
 	
 		if(enabledCheck_value != String(jsonData.md_is_enabled)){
 			$("#enabledCheck").click();
-		}
+		};
+
 		$("#enabledCheck").val(jsonData.md_is_enabled);
 		$("#dbsModalUname").val(jsonData.md_unique_name);
 		$("#dbsModalSts").val(jsonData.md_statement_timeout_seconds);
