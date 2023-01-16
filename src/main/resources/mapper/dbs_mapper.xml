@@ -139,7 +139,7 @@
           md_client_key_path = #{md_client_key_path},
           </if>
           md_dbtype = #{md_dbtype},
-          md_is_enabled= #{md_is_enabled},
+          md_is_enabled= ${md_is_enabled},
           md_preset_config_name = #{md_preset_config_name},
           md_preset_config_name_standby = #{md_preset_config_name_standby},
           md_config = to_json(#{md_config} ::json),

@@ -323,6 +323,10 @@ $(document).ready(function () {
 
 	$("#dbsModalFormSubmit").click(function () {
 		var params = changeSnakeCase($("#dbsModalForm").serializeArray());
+
+		params.push({name: 'md_is_enabled', value: Boolean($("#enabledCheck").val())});
+		console.log("params : " , params);
+
 		var dbsModalMode = $("#dbsModalCategory").val();
 		var requestUrls = (dbsModalMode ?? "") == "ADD" ? "/insertMonitoredDb" : ((dbsModalMode ?? "") == "EDIT" ? "/updateMonitoredDb" : "");
 		var returnMsg = (dbsModalMode ?? "") == "ADD" ? "등록" : ((dbsModalMode ?? "") == "EDIT" ? "수정" : "");
@@ -362,7 +366,7 @@ $(document).ready(function () {
 							alert(returnMsg + " 실패");
 						} else {
 							alert(returnMsg + " 완료");
-							console.log("완료", result);
+							console.log("완료", params);
 							gridRefresh();
 							$("#dbsModal").modal('hide');
 						}
@@ -371,7 +375,26 @@ $(document).ready(function () {
 			}
 		});
 	});
+
+	$("#enabledCheck").click(function () {
+		if (this.checked) {
+			$("#enabledCheck").val("true");
+			$("#dbsModalForm input").prop("disabled", false);
+			$("#dbsModalForm select").prop("disabled", false);
+			$("#dbsModalForm button").prop("disabled", false);
+			$("#dbsModalForm textarea").prop("disabled", false);
+			$("#dbsModalUname").prop("disabled", true);
+		} else {
+			$("#enabledCheck").val("false");
+			$("#dbsModalForm input").prop("disabled", true);
+			$("#dbsModalForm select").prop("disabled", true);
+			$("#dbsModalForm button").prop("disabled", true);
+			$("#dbsModalForm textarea").prop("disabled", true);	
+		}
+	})
 });
+
+
 
 // var dbTypeEditTemplate = function (value, item) {
 // 	var $select = jsGrid.fields.select.prototype.editTemplate.apply(this, arguments);
@@ -584,31 +607,16 @@ function initModalDbsForm(params) {
 	$.each(params, function (i, data) {
 		var jsonData = data;
 
-		var enabledCheck_value = $("#enabledCheck").attr("value") || jsonData.md_is_enabled;
+		var enabledCheck_value = $("#enabledCheck").attr("value");
 
-		console.log("enabledCheck_value : ",Boolean(enabledCheck_value));
-		console.log("jsonData.md_is_enabled : " ,jsonData.md_is_enabled);
-		console.log("비교값 : ",Boolean(enabledCheck_value) != jsonData.md_is_enabled);
-		console.log("----------------")
-		$("#enabledCheck").click(function () {
-			if (this.checked) {
-				jsonData.md_is_enabled=this.checked;
-				$("#dbsModalForm input").prop("disabled", false);
-				$("#dbsModalForm select").prop("disabled", false);
-				$("#dbsModalForm button").prop("disabled", false);
-				$("#dbsModalForm textarea").prop("disabled", false);
-				$("#dbsModalUname").prop("disabled", true);
-				console.log("md_is_enabled true일때",jsonData.md_is_enabled);
-			} else {
-				jsonData.md_is_enabled=this.checked;
-				$("#dbsModalForm input").prop("disabled", true);
-				$("#dbsModalForm select").prop("disabled", true);
-				$("#dbsModalForm button").prop("disabled", true);
-				$("#dbsModalForm textarea").prop("disabled", true);	
-				console.log("md_is_enabled false일때",jsonData.md_is_enabled);
-			}
-		})
-
+		console.log("enabledCheck_value : ",enabledCheck_value);
+		console.log("jsonData.md_is_enabled : " ,String(jsonData.md_is_enabled));
+		console.log("클릭했다? : ",enabledCheck_value != String(jsonData.md_is_enabled));
+	
+		if(enabledCheck_value != String(jsonData.md_is_enabled)){
+			$("#enabledCheck").click();
+		}
+		$("#enabledCheck").val(jsonData.md_is_enabled);
 		$("#dbsModalUname").val(jsonData.md_unique_name);
 		$("#dbsModalSts").val(jsonData.md_statement_timeout_seconds);
 		$("#dbsModalHostName").val(jsonData.md_hostname);
@@ -631,16 +639,11 @@ function initModalDbsForm(params) {
 		$("#dbsModalRootCaPath").val(jsonData.md_root_ca_path);
 		$("#dbsModalCcp").val(jsonData.md_client_cert_path);
 		$("#dbsModalCkp").val(jsonData.md_client_key_path);
-		$("#enabledCheck").val(jsonData.md_is_enabled);
-
+		//$("#enabledCheck").val(jsonData.md_is_enabled);
 		var flagSslMode = jsonData.md_sslmode === "disabled";
 		$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", flagSslMode);
 		
-
 	});
-
-
-
 	$("#dbsModal").modal('show');
 }
 
@@ -690,7 +693,6 @@ function changeSnakeCase(params) {
 		tempObject['value'] = v.value;
 		changeArr.push(tempObject);
 	});
-
 	return changeArr;
 }
 
