@@ -196,7 +196,7 @@
                             <div class="modal-header">
                                 <h5 class="modal-title" id="dbsModalTitle">DBs 등록</h5>
                                 <div class="form-check form-switch" style="margin-left: 4%;" id="enabled">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="enabledCheck" checked value="true">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="enabledCheck" checked >
                                     <label class="form-check-label" for="flexSwitchCheckDefault">Enabled</label>
                                 </div>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -206,8 +206,7 @@
                                 <form id="dbsModalForm" class="needs-validation">
                                     <input type="hidden" id="dbsModalCategory">
                                     <input type="hidden" id="dbsModalId" name="dbsModalMdId">
-                                    <!-- 2 column grid layout with text inputs for the first and last names -->
-                                    
+                                    <!-- 2 column grid layout with text inputs for the first and last names --> 
                                     <div class="row mb-4">
                                         <div class="col">
                                             <div class="form-floating">

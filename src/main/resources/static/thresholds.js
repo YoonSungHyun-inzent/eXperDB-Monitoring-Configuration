@@ -206,6 +206,7 @@ var initJsGridThreshold = function() {
 
 		// data: clients,
 		fields: [
+			{type: "control", modeSwitchButton: true, editButton: false},
 			//-------------------------
 			// { name: "number", headtitle: "number", type:"text", width: 20,align: "left",textField:"number",editing:false},
 			{ name: "stat_name", headtitle: "Stat_name", type:"select", width: 80,align: "left", items:stat_name_sel,valueField:"value",textField:"name",
@@ -220,7 +221,6 @@ var initJsGridThreshold = function() {
 			} },
 			{ name: "critical", headtitle: "Critical", type:"text",width: 80, align: "center"},
 			{ name: "use_yn", headtitle: "Use YN", type:"text", width: 40},
-			{type: "control", modeSwitchButton: true, editButton: false},
 			
 			//---------------------
 		]

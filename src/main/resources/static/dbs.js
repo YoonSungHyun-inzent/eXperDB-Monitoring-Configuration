@@ -270,7 +270,6 @@ $(document).ready(function () {
 		]
 	});
 
-
 	/**
 	 * jsgrid scroll
 	 */
@@ -315,23 +314,59 @@ $(document).ready(function () {
 	$("#dbsModalSslMode").change(function () {
 		if (this.value != "disable") {
 			$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", false);
-			console.log("111111");
+			
 		} else
 			$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", true);
-		console.log("22222");
+		
 	});
+	$("#enabledCheck").click(function () {
+		disabledForm(this.checked);
+		// if (this.checked) {
+		// 	$("#enabledCheck").val("true");
+		// 	$("#dbsModalForm input").prop("disabled", false);
+		// 	$("#dbsModalForm select").prop("disabled", false);
+		// 	$("#dbsModalForm button").prop("disabled", false);
+		// 	$("#dbsModalForm textarea").prop("disabled", false);
+		// 	$("#dbsModalUname").prop("disabled", false);
+		// } else {
+		// 	$("#enabledCheck").val("false");
+		// 	$("#dbsModalForm input").prop("disabled", true);
+		// 	$("#dbsModalForm select").prop("disabled", true);
+		// 	$("#dbsModalForm button").prop("disabled", true);
+		// 	$("#dbsModalForm textarea").prop("disabled", true);	
+		// }
+	})
 
 	$("#dbsModalFormSubmit").click(function () {
 		var params = changeSnakeCase($("#dbsModalForm").serializeArray());
-
-		params.push({name: 'md_is_enabled', value: Boolean($("#enabledCheck").val())});
+		params.push({name: 'md_is_enabled', value: Boolean($("#enabledCheck").is("checked"))});
+		// params.push({name: 'md_unique_name', value: $("#dbsModalUname").val()});
+		// params.push({name: 'md_statement_timeout_seconds', value: $("#dbsModalSts").val()});
+		// params.push({name: 'md_hostname', value: $("#dbsModalHostName").val()});
+		// params.push({name: 'md_port', value: $("#dbsModalPort").val()});
+		// params.push({name: 'md_dbname', value: $("#dbsModalDbName").val()});
+		// params.push({name: 'md_user', value: $("#dbsModalDbUserName").val()});
+		// params.push({name: 'md_group', value: $("#dbsModalGroup").val()});
+		// params.push({name: 'md_custom_tags', value: $("#dbsModalCustomTags").val()});
+		// params.push({name: 'md_host_config', value: $("#dbsModalCustomTags").val()});
+		// params.push({name: 'md_custom_tags', value: $("#dbsModalHostConfig").val()});
+		// params.push({name: 'md_host_config', value: $("#dbsModalConfig2").val()});
+		// params.push({name: 'md_config', value: $("#dbsModalDBtype").val()});
+		// params.push({name: 'md_password_type', value: $("#dbsModalDbPasswordType").val()});
+		// params.push({name: 'ms_upstream_hostname', value: $("#dbsModalUpstream").val()});
+		// // params.push({name: 'md_hostname', value: $("#dbsModalUpstream option[value='" + jsonData.md_hostname + "']").hide()});
+		// params.push({name: 'md_preset_config_name', value:$("#dbsModalPresetConfig").val()});
+		// params.push({name: 'md_preset_config_name_standby', value: $("#dbsModalPresetConfig2").val()});
+		// params.push({name: 'md_sslmode', value: $("#dbsModalSslMode").val()});
+		// params.push({name: 'md_root_ca_path', value: $("#dbsModalRootCaPath").val()});
+		// params.push({name: 'md_client_cert_path', value: $("#dbsModalCcp").val()});
+		// params.push({name: 'md_client_key_path', value: $("#dbsModalCkp").val()});
 		console.log("params : " , params);
 
 		var dbsModalMode = $("#dbsModalCategory").val();
 		var requestUrls = (dbsModalMode ?? "") == "ADD" ? "/insertMonitoredDb" : ((dbsModalMode ?? "") == "EDIT" ? "/updateMonitoredDb" : "");
 		var returnMsg = (dbsModalMode ?? "") == "ADD" ? "등록" : ((dbsModalMode ?? "") == "EDIT" ? "수정" : "");
-
-		var forms = document.querySelectorAll('.needs-validation')
+		var forms = document.querySelectorAll('.needs-validation');
 
 		// Loop over them and prevent submission
 		Array.prototype.slice.call(forms).forEach(function (form) {
@@ -374,23 +409,6 @@ $(document).ready(function () {
 			}
 		});
 	});
-
-	$("#enabledCheck").click(function () {
-		if (this.checked) {
-			$("#enabledCheck").val("true");
-			$("#dbsModalForm input").prop("disabled", false);
-			$("#dbsModalForm select").prop("disabled", false);
-			$("#dbsModalForm button").prop("disabled", false);
-			$("#dbsModalForm textarea").prop("disabled", false);
-			$("#dbsModalUname").prop("disabled", true);
-		} else {
-			$("#enabledCheck").val("false");
-			$("#dbsModalForm input").prop("disabled", true);
-			$("#dbsModalForm select").prop("disabled", true);
-			$("#dbsModalForm button").prop("disabled", true);
-			$("#dbsModalForm textarea").prop("disabled", true);	
-		}
-	})
 });
 
 
@@ -557,8 +575,7 @@ function openDbsModal(category, id) {
 		$("#dbsModalUname").prop("disabled", false);
 		$("#dbsModalDbPassword").prop('required', true);
 		$("#enabled").hide();
-		$("#dbsModal").modal('show');
-		
+		$("#dbsModal").modal('show');	
 	}
 	else if (category == "EDIT") {
 		$("#dbsModalTitle").text("DBs 수정");
@@ -602,21 +619,13 @@ function selectMonitoredDbDetail(id) {
 }
 
 function initModalDbsForm(params) {
-
 	$.each(params, function (i, data) {
 		var jsonData = data;
 
-		var enabledCheck_value = $("#enabledCheck").attr("value");
-		
-		console.log("enabledCheck_value : ",enabledCheck_value);
-		console.log("jsonData.md_is_enabled : " ,String(jsonData.md_is_enabled));
-		console.log("클릭했다? : ",enabledCheck_value != String(jsonData.md_is_enabled));
-	
-		if(enabledCheck_value != String(jsonData.md_is_enabled)){
-			$("#enabledCheck").click();
-		};
+		// disabledForm(jsonData.md_is_enabled);
 
-		$("#enabledCheck").val(jsonData.md_is_enabled);
+		$("#enabledCheck").prop("checked", jsonData.md_is_enabled);
+		
 		$("#dbsModalUname").val(jsonData.md_unique_name);
 		$("#dbsModalSts").val(jsonData.md_statement_timeout_seconds);
 		$("#dbsModalHostName").val(jsonData.md_hostname);
@@ -639,10 +648,8 @@ function initModalDbsForm(params) {
 		$("#dbsModalRootCaPath").val(jsonData.md_root_ca_path);
 		$("#dbsModalCcp").val(jsonData.md_client_cert_path);
 		$("#dbsModalCkp").val(jsonData.md_client_key_path);
-		//$("#enabledCheck").val(jsonData.md_is_enabled);
 		var flagSslMode = jsonData.md_sslmode === "disabled";
 		$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", flagSslMode);
-		
 	});
 	$("#dbsModal").modal('show');
 }
@@ -722,4 +729,22 @@ function gridRefresh() {
 	$("#" + grid_name + " > .jsgrid-grid-body").scrollTop(0);
 	$("#" + grid_name + " > .jsgrid-grid-body").scrollLeft(0);
 }
+
+disabledForm = (flag) => {
+	if (flag) {
+		$("#enabledCheck").prop("checked", true);
+		$("#dbsModalForm input").prop("disabled", false);
+		$("#dbsModalForm select").prop("disabled", false);
+		$("#dbsModalForm button").prop("disabled", false);
+		$("#dbsModalForm textarea").prop("disabled", false);
+		$("#dbsModalUname").prop("disabled", false);
+	} else {
+		$("#enabledCheck").prop("checked", false);
+		$("#dbsModalForm input").prop("disabled", true);
+		$("#dbsModalForm select").prop("disabled", true);
+		$("#dbsModalForm button").prop("disabled", true);
+		$("#dbsModalForm textarea").prop("disabled", true);	
+	}
+}
+
 
