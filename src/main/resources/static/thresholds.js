@@ -221,7 +221,6 @@ var initJsGridThreshold = function() {
 			} },
 			{ name: "critical", headtitle: "Critical", type:"text",width: 80, align: "center"},
 			{ name: "use_yn", headtitle: "Use YN", type:"text", width: 40},
-			
 			//---------------------
 		]
 	});

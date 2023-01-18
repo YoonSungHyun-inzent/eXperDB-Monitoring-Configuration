@@ -1,5 +1,3 @@
-
-
 var grid_name = "jsGrid";
 
 $(document).ready(function () {
@@ -28,8 +26,6 @@ $(document).ready(function () {
 	];
 
 	var Upstream_arr = [];
-
-
 
 	$("#jsGrid").jsGrid({
 		width: "100%",
@@ -314,10 +310,10 @@ $(document).ready(function () {
 	$("#dbsModalSslMode").change(function () {
 		if (this.value != "disable") {
 			$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", false);
-			
+
 		} else
 			$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", true);
-		
+
 	});
 	$("#enabledCheck").click(function () {
 		disabledForm(this.checked);
@@ -339,29 +335,9 @@ $(document).ready(function () {
 
 	$("#dbsModalFormSubmit").click(function () {
 		var params = changeSnakeCase($("#dbsModalForm").serializeArray());
-		params.push({name: 'md_is_enabled', value: Boolean($("#enabledCheck").is("checked"))});
-		// params.push({name: 'md_unique_name', value: $("#dbsModalUname").val()});
-		// params.push({name: 'md_statement_timeout_seconds', value: $("#dbsModalSts").val()});
-		// params.push({name: 'md_hostname', value: $("#dbsModalHostName").val()});
-		// params.push({name: 'md_port', value: $("#dbsModalPort").val()});
-		// params.push({name: 'md_dbname', value: $("#dbsModalDbName").val()});
-		// params.push({name: 'md_user', value: $("#dbsModalDbUserName").val()});
-		// params.push({name: 'md_group', value: $("#dbsModalGroup").val()});
-		// params.push({name: 'md_custom_tags', value: $("#dbsModalCustomTags").val()});
-		// params.push({name: 'md_host_config', value: $("#dbsModalCustomTags").val()});
-		// params.push({name: 'md_custom_tags', value: $("#dbsModalHostConfig").val()});
-		// params.push({name: 'md_host_config', value: $("#dbsModalConfig2").val()});
-		// params.push({name: 'md_config', value: $("#dbsModalDBtype").val()});
-		// params.push({name: 'md_password_type', value: $("#dbsModalDbPasswordType").val()});
-		// params.push({name: 'ms_upstream_hostname', value: $("#dbsModalUpstream").val()});
-		// // params.push({name: 'md_hostname', value: $("#dbsModalUpstream option[value='" + jsonData.md_hostname + "']").hide()});
-		// params.push({name: 'md_preset_config_name', value:$("#dbsModalPresetConfig").val()});
-		// params.push({name: 'md_preset_config_name_standby', value: $("#dbsModalPresetConfig2").val()});
-		// params.push({name: 'md_sslmode', value: $("#dbsModalSslMode").val()});
-		// params.push({name: 'md_root_ca_path', value: $("#dbsModalRootCaPath").val()});
-		// params.push({name: 'md_client_cert_path', value: $("#dbsModalCcp").val()});
-		// params.push({name: 'md_client_key_path', value: $("#dbsModalCkp").val()});
-		console.log("params : " , params);
+		params.push({ name: 'md_is_enabled', value: Boolean($("#enabledCheck").is("checked")) });
+		
+		console.log("params : ", params);
 
 		var dbsModalMode = $("#dbsModalCategory").val();
 		var requestUrls = (dbsModalMode ?? "") == "ADD" ? "/insertMonitoredDb" : ((dbsModalMode ?? "") == "EDIT" ? "/updateMonitoredDb" : "");
@@ -575,7 +551,7 @@ function openDbsModal(category, id) {
 		$("#dbsModalUname").prop("disabled", false);
 		$("#dbsModalDbPassword").prop('required', true);
 		$("#enabled").hide();
-		$("#dbsModal").modal('show');	
+		$("#dbsModal").modal('show');
 	}
 	else if (category == "EDIT") {
 		$("#dbsModalTitle").text("DBs 수정");
@@ -586,7 +562,6 @@ function openDbsModal(category, id) {
 		selectMonitoredDbDetail(id);
 		console.log("edit ID값", id);
 	}
-	
 }
 
 function selectMonitoredDbDetail(id) {
@@ -622,10 +597,10 @@ function initModalDbsForm(params) {
 	$.each(params, function (i, data) {
 		var jsonData = data;
 
-		// disabledForm(jsonData.md_is_enabled);
+		disabledForm(jsonData.md_is_enabled);
 
-		$("#enabledCheck").prop("checked", jsonData.md_is_enabled);
-		
+		// $("#enabledCheck").prop("checked", jsonData.md_is_enabled);
+
 		$("#dbsModalUname").val(jsonData.md_unique_name);
 		$("#dbsModalSts").val(jsonData.md_statement_timeout_seconds);
 		$("#dbsModalHostName").val(jsonData.md_hostname);
@@ -737,13 +712,14 @@ disabledForm = (flag) => {
 		$("#dbsModalForm select").prop("disabled", false);
 		$("#dbsModalForm button").prop("disabled", false);
 		$("#dbsModalForm textarea").prop("disabled", false);
-		$("#dbsModalUname").prop("disabled", false);
+		$("#dbsModalUname").prop("disabled", true);
 	} else {
 		$("#enabledCheck").prop("checked", false);
 		$("#dbsModalForm input").prop("disabled", true);
 		$("#dbsModalForm select").prop("disabled", true);
 		$("#dbsModalForm button").prop("disabled", true);
-		$("#dbsModalForm textarea").prop("disabled", true);	
+		$("#dbsModalForm textarea").prop("disabled", true);
+		$("#dbsModalUname").prop("disabled", true);
 	}
 }
 
