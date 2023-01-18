@@ -317,26 +317,12 @@ $(document).ready(function () {
 	});
 	$("#enabledCheck").click(function () {
 		disabledForm(this.checked);
-		// if (this.checked) {
-		// 	$("#enabledCheck").val("true");
-		// 	$("#dbsModalForm input").prop("disabled", false);
-		// 	$("#dbsModalForm select").prop("disabled", false);
-		// 	$("#dbsModalForm button").prop("disabled", false);
-		// 	$("#dbsModalForm textarea").prop("disabled", false);
-		// 	$("#dbsModalUname").prop("disabled", false);
-		// } else {
-		// 	$("#enabledCheck").val("false");
-		// 	$("#dbsModalForm input").prop("disabled", true);
-		// 	$("#dbsModalForm select").prop("disabled", true);
-		// 	$("#dbsModalForm button").prop("disabled", true);
-		// 	$("#dbsModalForm textarea").prop("disabled", true);	
-		// }
 	})
 
 	$("#dbsModalFormSubmit").click(function () {
 		var params = changeSnakeCase($("#dbsModalForm").serializeArray());
 		params.push({ name: 'md_is_enabled', value: Boolean($("#enabledCheck").is("checked")) });
-		
+
 		console.log("params : ", params);
 
 		var dbsModalMode = $("#dbsModalCategory").val();
@@ -598,9 +584,7 @@ function initModalDbsForm(params) {
 		var jsonData = data;
 
 		disabledForm(jsonData.md_is_enabled);
-
 		// $("#enabledCheck").prop("checked", jsonData.md_is_enabled);
-
 		$("#dbsModalUname").val(jsonData.md_unique_name);
 		$("#dbsModalSts").val(jsonData.md_statement_timeout_seconds);
 		$("#dbsModalHostName").val(jsonData.md_hostname);
@@ -645,7 +629,6 @@ function saveClient(client, isNew, grid, arridx_target) {
 	var obj = new Object();
 	for (var i = 0; i < rowSize; i++) {
 		tr = targetTbl.find('tbody').find('tr:eq(' + i + ')');
-
 		for (var j = 0; j < colSize; j++) {
 			if (tr.children().eq(j).prop("tagName") == 'TH')
 				th = tr.children().eq(j).text();
