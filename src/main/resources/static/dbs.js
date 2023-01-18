@@ -34,7 +34,7 @@ $(document).ready(function () {
 		inserting: false,
 		editing: false,
 		sorting: true,
-		paging: true,
+		paging: false,
 		autoload: true,
 
 		rowClick: function (args) {
@@ -310,7 +310,6 @@ $(document).ready(function () {
 	$("#dbsModalSslMode").change(function () {
 		if (this.value != "disable") {
 			$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", false);
-
 		} else
 			$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", true);
 
@@ -322,9 +321,6 @@ $(document).ready(function () {
 	$("#dbsModalFormSubmit").click(function () {
 		var params = changeSnakeCase($("#dbsModalForm").serializeArray());
 		params.push({ name: 'md_is_enabled', value: Boolean($("#enabledCheck").is("checked")) });
-
-		console.log("params : ", params);
-
 		var dbsModalMode = $("#dbsModalCategory").val();
 		var requestUrls = (dbsModalMode ?? "") == "ADD" ? "/insertMonitoredDb" : ((dbsModalMode ?? "") == "EDIT" ? "/updateMonitoredDb" : "");
 		var returnMsg = (dbsModalMode ?? "") == "ADD" ? "등록" : ((dbsModalMode ?? "") == "EDIT" ? "수정" : "");
@@ -372,9 +368,6 @@ $(document).ready(function () {
 		});
 	});
 });
-
-
-
 // var dbTypeEditTemplate = function (value, item) {
 // 	var $select = jsGrid.fields.select.prototype.editTemplate.apply(this, arguments);
 // 	// var $select = jsGrid.fields.select.prototype.editTemplate.call(this);
@@ -525,7 +518,6 @@ $(document).ready(function () {
 
 function openDbsModal(category, id) {
 	dbsModalMode = category;
-
 	$("#dbsModalForm")[0].reset();
 	$("#dbsModalCategory").val(category);
 	$("#dbsModalForm").removeClass("was-validated");
@@ -645,7 +637,6 @@ function saveClient(client, isNew, grid, arridx_target) {
 
 function changeSnakeCase(params) {
 	var changeArr = [];
-
 	$.each(params, function (i, v) {
 		var tempObject = {};
 		var tempName = v.name;

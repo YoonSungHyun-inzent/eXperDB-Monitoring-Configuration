@@ -171,8 +171,7 @@ public class ConfigController {
 
         result.put("result", i);
 
-        return result;
-        
+        return result;  
     }
 
     @ResponseBody
