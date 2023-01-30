@@ -57,17 +57,17 @@ public class ConfigController {
         return "redirect:/";
     }
 
-    @RequestMapping(value = "metrics")
+    @RequestMapping(value = "/metrics")
     public String metric(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
         return "metrics";
     }
 
-    @RequestMapping(value = "presets")
+    @RequestMapping(value = "/presets")
     public String preset(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
         return "presets";
     }
 
-    @RequestMapping(value = "thresholds")
+    @RequestMapping(value = "/thresholds")
     public String thresholds(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
         return "thresholds";
     }

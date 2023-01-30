@@ -47,6 +47,11 @@
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                         Database 관리
                     </a>
+                    <div class="sb-sidenav-menu-heading">experdb-Monitoring</div>
+                    <a class="nav-link" href="http://43.201.115.245:3000/d/experdb-multi-cluster/multi-cluster?orgId=1">
+                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                        Monitoring server
+                    </a>
                     <div class="sb-sidenav-menu-heading">Metrics</div>
                     <a class="nav-link collapsed" href="/presets">
                         <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>

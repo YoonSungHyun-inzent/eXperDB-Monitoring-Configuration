@@ -63,6 +63,10 @@ var initJsGridThreshold = function() {
 		{name: "xact_commit", value: "xact_commit"},
 		{name: "xact_rollback", value: "xact_rollback"},
 	];
+	var Use_YN = [
+		{name: "Y", value: "Y"},
+		{name: "N", value: "N"},
+	];
 
 	$("#jsGridThreshold").jsGrid({
 		width: "100%",
@@ -206,10 +210,10 @@ var initJsGridThreshold = function() {
 
 		// data: clients,
 		fields: [
-			{type: "control", modeSwitchButton: true, editButton: false},
+			{type: "control", modeSwitchButton: true, editButton: false,width: 40},
 			//-------------------------
 			// { name: "number", headtitle: "number", type:"text", width: 20,align: "left",textField:"number",editing:false},
-			{ name: "stat_name", headtitle: "Stat_name", type:"select", width: 80,align: "left", items:stat_name_sel,valueField:"value",textField:"name",
+			{ name: "stat_name", headtitle: "Stat_name", type:"select", width: 80,align: "left", items:stat_name_sel, valueField:"value", textField:"name",
 			itemTemplate: function(value) {
 				return $("<div>").addClass("text-truncate").text(value);
 			} },
@@ -220,7 +224,7 @@ var initJsGridThreshold = function() {
 					return $("<div>").addClass("text-truncate").text(value);
 			} },
 			{ name: "critical", headtitle: "Critical", type:"text",width: 80, align: "center"},
-			{ name: "use_yn", headtitle: "Use YN", type:"text", width: 40},
+			{ name: "use_yn", headtitle: "Use YN", type:"select", items:Use_YN, valueField:"value", textFiled:"name", width: 40, textField:"name"},
 			//---------------------
 		]
 	});
