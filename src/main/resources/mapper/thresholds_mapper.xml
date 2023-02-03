@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.experdb.configuration.mapper.ThresholdsMapper">
     <select id="selectThresholds" resultType="hashMap">
-      select number,stat_name,condition ,warning,critical,use_yn from experdb.threshold
+      select number,stat_name,condition ,warning,critical,use_yn from experdb.threshold order by stat_name
     </select>
     <insert id="insertThresholds" parameterType="hashMap">
       insert into

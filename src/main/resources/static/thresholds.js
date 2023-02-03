@@ -210,22 +210,20 @@ var initJsGridThreshold = function() {
 
 		// data: clients,
 		fields: [
-			{type: "control", modeSwitchButton: true, editButton: false,width: 40},
-			//-------------------------
-			// { name: "number", headtitle: "number", type:"text", width: 20,align: "left",textField:"number",editing:false},
-			{ name: "stat_name", headtitle: "Stat_name", type:"select", width: 80,align: "left", items:stat_name_sel, valueField:"value", textField:"name",
+			{type: "control", modeSwitchButton: true, editButton: false,width: 30},	
+			// {name: "number", headtitle: "number", type:"text", width: 20,align: "left",textField:"number",editing:false},
+			{name: "stat_name", headtitle: "Stat_name", type:"select",align: "left", items:stat_name_sel, valueField:"value", textField:"name",
 			itemTemplate: function(value) {
 				return $("<div>").addClass("text-truncate").text(value);
 			} },
-			{ name: "condition", headtitle: "Condition", type: "select", width: 80, align: "center",items:condition_sel,valueField: "value",textField:"name",itemTemplate: function(value) {
+			{name: "condition", headtitle: "Condition", type: "select", align: "center",items:condition_sel,valueField: "value",textField:"name",itemTemplate: function(value) {
 					return $("<div>").addClass("text-truncate").text(value);
 			} },
-			{ name: "warning", headtitle: "Warning", type: "text", width: 80, align: "center",itemTemplate: function(value) {
+			{name: "warning", headtitle: "Warning", type: "text", align: "center",itemTemplate: function(value) {
 					return $("<div>").addClass("text-truncate").text(value);
 			} },
-			{ name: "critical", headtitle: "Critical", type:"text",width: 80, align: "center"},
-			{ name: "use_yn", headtitle: "Use YN", type:"select", items:Use_YN, valueField:"value", textFiled:"name", width: 40, textField:"name"},
-			//---------------------
+			{name: "critical", headtitle: "Critical", type:"text",align: "center"},
+			{name: "use_yn", headtitle: "Use YN", type:"select", items:Use_YN, valueField:"value", textFiled:"name", width: 50, textField:"name"},		
 		]
 	});
 

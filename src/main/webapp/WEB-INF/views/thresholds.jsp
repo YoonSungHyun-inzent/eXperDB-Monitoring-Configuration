@@ -117,9 +117,7 @@
                             <%-- <div class="card mb-4">
                                 <div class="card-body">
                                     수집 대상 데이터 베이스 관리 화면 입니다.
-                                    <a target="_blank" href="https://datatables.net/">official DataTables
-                                        documentation</a>
-                                    .
+                                    <a target="_blank" href="https://datatables.net/">official DataTables documentation</a>
                                 </div>
                         </div> --%>
                         <div id="jsGridThreshold"></div>
