@@ -89,6 +89,14 @@
                         height: 100px;
                         overflow: hidden;
                     }
+                    
+                    .dashboard-select {
+                        float: right; 
+                        margin-top: 3%; 
+                        margin-right: 1%; 
+                        width: 250px;
+                    }
+
                 </style>
 
                 <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.js"></script>
@@ -118,15 +126,8 @@
                                 <li class="breadcrumb-item active">Databases under monitoring</li>
                             </ol>
                             </span>
-                            <span style="float: right;">
-                            <select class="form-select" aria-label="Default select example" style="width: 100%; float: right;">
-                                <option selected>Dashboard link</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
-                              </select>
-                            </span>
-                            
+                            <%@ include file="./sidebar/dashboardLink.jsp"%>
+                         
                             <%-- <div class="card mb-4">
                                 <div class="card-body">
                                     수집 대상 데이터 베이스 관리 화면 입니다.

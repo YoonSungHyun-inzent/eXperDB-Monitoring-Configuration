@@ -89,6 +89,14 @@
                         height: 100px;
                         overflow: hidden;
                     }
+
+                    .dashboard-select {
+                        float: right; 
+                        margin-top: 3%; 
+                        margin-right: 2%; 
+                        width: 250px;
+                    }
+
                 </style>
 
                 <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.js"></script>
@@ -110,12 +118,14 @@
                 <%@ include file="./sidebar/nav.jsp"%>
                 <div id="layoutSidenav_content">
                     <main>
+                        <%@ include file="./sidebar/dashboardLink.jsp"%>
                         <div class="container-fluid px-4">
                             <h1 class="mt-4">Metrics</h1>
                             <ol class="breadcrumb mb-4">
                                 <!-- <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li> -->
                                 <li class="breadcrumb-item active">Metric definitions</li>
                             </ol>
+                            
                             <%-- <div class="card mb-4">
                                 <div class="card-body">
                                     수집 대상 데이터 베이스 관리 화면 입니다.
