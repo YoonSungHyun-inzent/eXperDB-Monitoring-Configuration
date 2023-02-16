@@ -290,6 +290,43 @@ public class ConfigController {
         result.put("result", thresholds);
         return result;
     }
+    @ResponseBody
+    @RequestMapping(value = "/selectServerMgmt")
+    public JSONArray selectServerMgmt(HttpServletRequest request, HttpServletResponse response,@RequestParam HashMap<String, Object> paramMap, Model model) throws Exception {
+        List<Map<String, Object>> serverMgmtList = thresholdsService.selectServerMgmt();
+        JSONArray serverMgmtJsonArray = ConvertJSON.convertListToJson(serverMgmtList);
+        return serverMgmtJsonArray;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/insertServerMgmt")
+    public JSONObject insertServerMgmt(HttpServletRequest request, HttpServletResponse response,@RequestParam HashMap<String, Object> paramMap, Model model) throws Exception {
+        int serverMgmt = thresholdsService.insertServerMgmt(paramMap);
+        JSONObject result = new JSONObject();
+        result.put("result", serverMgmt);
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/updateServerMgmt")
+    public JSONObject updateServerMgmt(HttpServletRequest request, HttpServletResponse response,@RequestParam HashMap<String, Object> paramMap, Model model) throws Exception {
+        System.out.println("paramMap" + paramMap.get("number").getClass());
+        int serverMgmt = thresholdsService.updateServerMgmt(paramMap);
+        JSONObject result = new JSONObject();
+        System.out.println(paramMap + " ::: " + response);
+        result.put("result", serverMgmt);
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/deleteServerMgmt")
+    public JSONObject deleteServerMgmt(HttpServletRequest request, HttpServletResponse response,@RequestParam HashMap<String, Object> paramMap, Model model) throws Exception {
+        int serverMgmt = thresholdsService.deleteServerMgmt(paramMap);
+        JSONObject result = new JSONObject();
+        System.out.println(paramMap + " ::: " + response);
+        result.put("result", serverMgmt);
+        return result;
+    }
 
     @RequestMapping(value = "/favicon.ico", method = RequestMethod.GET)
         public void favicon( HttpServletRequest request, HttpServletResponse reponse ) {

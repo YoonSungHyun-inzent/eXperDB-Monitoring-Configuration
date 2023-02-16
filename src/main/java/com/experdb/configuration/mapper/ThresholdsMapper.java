@@ -10,6 +10,11 @@ import org.springframework.stereotype.Component;
 @Component
 @MapperScan
 public interface ThresholdsMapper {
+    public List<Map<String, Object>> selectServerMgmt() throws Exception;
+    public int insertServerMgmt(HashMap<String,Object> map) throws Exception;
+    public int updateServerMgmt(HashMap<String,Object> map) throws Exception;
+    public int deleteServerMgmt(HashMap<String,Object> map) throws Exception;
+
     public List<Map<String, Object>> selectThresholds() throws Exception;
     public int insertThresholds(HashMap<String,Object> map) throws Exception;
     public int updateThresholds(HashMap<String,Object> map) throws Exception;

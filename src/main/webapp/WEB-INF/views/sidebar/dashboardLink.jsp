@@ -3,7 +3,7 @@
     <select onchange="if(this.value) location.href=(this.value);" class="form-select" aria-label="Default select example" >
         <option selected>Dashboard link</option>
         <option value="/presets">preset</option>
-        <option value="/metrics">metric</option>
+        <option value="/metrics">metric</option>f
         <option value="/thresholds">Server-Threshold</option>
     </select>
 </span>

@@ -3,7 +3,6 @@
         <%@ page trimDirectiveWhitespaces="true" %>
             <!DOCTYPE html>
             <html lang="en">
-
             <head>
                 <meta charset="UTF-8">
                 <title>experDB :: Server Event Thresholds</title>
@@ -127,7 +126,14 @@
                                     <a target="_blank" href="https://datatables.net/">official DataTables documentation</a>
                                 </div>
                         </div> --%>
-                        <div id="jsGridThreshold"></div>
+
+                  
+                        <p style="width: 31%; float: left;">Server Management</p>
+                        <p style="width: 50%; float: left;">Server Threshold</p>
+                        <div id="serverMgmt" style="float: left; margin-right: 10px;"></div>
+                        <div id="jsGridThreshold" style="float: left; margin-right: 10px;" ></div>
+                    
+                    
                         <%-- <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
@@ -137,13 +143,14 @@
                                 <!-- grid 예정 -->
                             </div>
                 </div> --%>
-                <div id="jsGridThreshold"></div>
+                
+                
                 </div>
                 </main>
                 <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid px-4">
                         <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; eXperDB 2022</div>
+                            <div class="text-muted">Copyright &copy; eXperDB 2023</div>
                             <!-- <div>
                         <a href="#">Privacy Policy</a>
                         &middot;

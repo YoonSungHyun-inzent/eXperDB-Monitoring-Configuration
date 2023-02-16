@@ -16,6 +16,22 @@ import lombok.AllArgsConstructor;
 public class ThresholdsServiceImpl implements ThresholdsService {
     private ThresholdsMapper thresholdsMapper;
     @Override
+    public List<Map<String, Object>> selectServerMgmt() throws Exception {
+        return thresholdsMapper.selectServerMgmt();
+    }
+    @Override
+    public int insertServerMgmt(HashMap<String, Object> map) throws Exception {
+        return thresholdsMapper.insertServerMgmt(map);
+    }
+    @Override
+    public int updateServerMgmt(HashMap<String, Object> map) throws Exception {
+        return thresholdsMapper.updateServerMgmt(map);
+    }
+    @Override
+    public int deleteServerMgmt(HashMap<String, Object> map) throws Exception {
+        return thresholdsMapper.deleteServerMgmt(map);
+    }
+    @Override
     public List<Map<String, Object>> selectThresholds() throws Exception {
         return thresholdsMapper.selectThresholds();
     }
