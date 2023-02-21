@@ -118,6 +118,7 @@
                 <%@ include file="./sidebar/nav.jsp"%>
                 <div id="layoutSidenav_content">
                     <main>
+                        </main>
                         <div class="container-fluid px-4">
                             <span style="float: left;">
                             <h1 class="mt-4">DBs</h1>
@@ -145,10 +146,9 @@
                             <div class="card-body">
                                 <!-- grid 예정 -->
                             </div>
-                </div> --%>
-                <div id="jsGrid"></div>
-                </div>
-                </main>
+                        </div> --%>
+                        <div id="jsGrid"></div>
+                    </main>
                 <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid px-4">
                         <div class="d-flex align-items-center justify-content-between small">
