@@ -9,7 +9,7 @@
       insert into experdb.server_mgmt (machine_type,description) values(#{machine_type},#{description});
     </insert>
     <update id="updateServerMgmt" parameterType="hashMap">
-      update server_mgmt set machine_type = #{machine_type},description = #{description}, where number = #{number}::numeric 
+      update server_mgmt set machine_type = #{machine_type},description = #{description} where number = #{number}::numeric 
     </update>
     <delete id="deleteServerMgmt" parameterType="hashMap">
       delete from experdb.server_mgmt where machine_type = #{machine_type}

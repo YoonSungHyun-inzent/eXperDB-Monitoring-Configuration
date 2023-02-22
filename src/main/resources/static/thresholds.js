@@ -103,7 +103,7 @@ var initServerMgmt=function(){
 			updateItem: function (params) {
 				console.log('업데이트_params : ',params)
 				return $.ajax({
-					url : "/updateServerMgnt",
+					url : "/updateServerMgmt",
 					data : params,
 					// dataType : "json",
 					type : "post",
