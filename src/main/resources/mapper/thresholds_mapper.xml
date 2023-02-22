@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.experdb.configuration.mapper.ThresholdsMapper">
+
     <select id="selectServerMgmt" resultType="hashMap">
       select number,machine_type,description from experdb.server_mgmt order by machine_type asc
     </select>
-
     <insert id="insertServerMgmt" parameterType="hashMap">
-      insert into experdb.server_mgmt (machine_type,description)  values(#{machine_type},#{description});
+      insert into experdb.server_mgmt (machine_type,description) values(#{machine_type},#{description});
     </insert>
-
     <update id="updateServerMgmt" parameterType="hashMap">
       update server_mgmt set machine_type = #{machine_type},description = #{description}, where number = #{number}::numeric 
     </update>
@@ -17,7 +16,7 @@
     </delete>
 
     <select id="selectThresholds" resultType="hashMap">
-      select number,stat_name,condition ,warning,critical,use_yn from experdb.threshold order by stat_name
+      select number,stat_name,condition,warning,critical,use_yn from experdb.threshold order by stat_name
     </select>
     <insert id="insertThresholds" parameterType="hashMap">
       insert into

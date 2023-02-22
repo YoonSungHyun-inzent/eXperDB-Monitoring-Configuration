@@ -55,7 +55,6 @@ var initJsGridMetricDefinitions = function() {
 				}).done(function(response) {
 					d.resolve(response);
 				});
-
 				return d.promise();
 			},
 			insertItem: function (params) {
@@ -116,7 +115,7 @@ var initJsGridMetricDefinitions = function() {
 						}else{
 							alert("수정 완료");
 						}
-						gridRefresh(grid_name);
+						
 					}
 				});
 			},

@@ -290,6 +290,7 @@ public class ConfigController {
         result.put("result", thresholds);
         return result;
     }
+    
     @ResponseBody
     @RequestMapping(value = "/selectServerMgmt")
     public JSONArray selectServerMgmt(HttpServletRequest request, HttpServletResponse response,@RequestParam HashMap<String, Object> paramMap, Model model) throws Exception {

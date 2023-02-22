@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ThresholdsServiceImpl implements ThresholdsService {
     private ThresholdsMapper thresholdsMapper;
+    
     @Override
     public List<Map<String, Object>> selectServerMgmt() throws Exception {
         return thresholdsMapper.selectServerMgmt();
