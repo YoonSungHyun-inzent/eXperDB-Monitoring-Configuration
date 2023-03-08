@@ -24,7 +24,7 @@
     <div>
         <a class="nav-link collapsed" href="http://43.201.115.245:3000/d/experdb-multi-cluster/multi-cluster?orgId=1&refresh=10s">
             <i class="fas fa-columns"></i>
-            Back to monitor
+            Back to Dashboard
         </a>
     </div>
     <!-- Navbar-->
