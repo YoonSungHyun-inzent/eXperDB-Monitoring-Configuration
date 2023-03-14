@@ -314,13 +314,10 @@ $(document).ready(function () {
 			$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", true);
 
 	});
-	$("#enabledCheck").click(function () {
-		disabledForm(this.checked);
-	})
-
+	
 	$("#dbsModalFormSubmit").click(function () {
 		var params = changeSnakeCase($("#dbsModalForm").serializeArray());
-		params.push({ name: 'md_is_enabled', value: Boolean($("#enabledCheck").is("checked")) });
+		// params.push({ name: 'md_is_enabled', value: Boolean($("#enabledCheck").is(":checked")) });
 		var dbsModalMode = $("#dbsModalCategory").val();
 		var requestUrls = (dbsModalMode ?? "") == "ADD" ? "/insertMonitoredDb" : ((dbsModalMode ?? "") == "EDIT" ? "/updateMonitoredDb" : "");
 		var returnMsg = (dbsModalMode ?? "") == "ADD" ? "등록" : ((dbsModalMode ?? "") == "EDIT" ? "수정" : "");
@@ -368,6 +365,12 @@ $(document).ready(function () {
 		});
 	});
 });
+
+// $("#enabledCheck").click(function () {
+	// 	disabledForm(this.checked);
+	// })
+
+
 // var dbTypeEditTemplate = function (value, item) {
 // 	var $select = jsGrid.fields.select.prototype.editTemplate.apply(this, arguments);
 // 	// var $select = jsGrid.fields.select.prototype.editTemplate.call(this);
@@ -679,22 +682,22 @@ function gridRefresh() {
 	$("#" + grid_name + " > .jsgrid-grid-body").scrollLeft(0);
 }
 
-disabledForm = (flag) => {
-	if (flag) {
-		$("#enabledCheck").prop("checked", true);
-		$("#dbsModalForm input").prop("disabled", false);
-		$("#dbsModalForm select").prop("disabled", false);
-		$("#dbsModalForm button").prop("disabled", false);
-		$("#dbsModalForm textarea").prop("disabled", false);
-		$("#dbsModalUname").prop("disabled", true);
-	} else {
-		$("#enabledCheck").prop("checked", false);
-		$("#dbsModalForm input").prop("disabled", true);
-		$("#dbsModalForm select").prop("disabled", true);
-		$("#dbsModalForm button").prop("disabled", true);
-		$("#dbsModalForm textarea").prop("disabled", true);
-		$("#dbsModalUname").prop("disabled", true);
-	}
-}
+// disabledForm = (flag) => {
+// 	if (flag) {
+// 		$("#enabledCheck").prop("checked", true);
+// 		$("#dbsModalForm input").prop("disabled", false);
+// 		$("#dbsModalForm select").prop("disabled", false);
+// 		$("#dbsModalForm button").prop("disabled", false);
+// 		$("#dbsModalForm textarea").prop("disabled", false);
+// 		$("#dbsModalUname").prop("disabled", true);
+// 	} else {
+// 		$("#enabledCheck").prop("checked", false);
+// 		$("#dbsModalForm input").prop("disabled", true);
+// 		$("#dbsModalForm select").prop("disabled", true);
+// 		$("#dbsModalForm button").prop("disabled", true);
+// 		$("#dbsModalForm textarea").prop("disabled", true);
+// 		$("#dbsModalUname").prop("disabled", true);
+// 	}
+// }
 
 
