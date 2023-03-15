@@ -314,10 +314,14 @@ $(document).ready(function () {
 			$("#dbsModalAccordionFlush .accordion-body input[type=text]").prop("disabled", true);
 
 	});
+
+	$("#enabledCheck").click(function () {
+		// disabledForm(this.checked);
+	})
 	
 	$("#dbsModalFormSubmit").click(function () {
 		var params = changeSnakeCase($("#dbsModalForm").serializeArray());
-		// params.push({ name: 'md_is_enabled', value: Boolean($("#enabledCheck").is(":checked")) });
+		params.push({ name: 'md_is_enabled', value: Boolean($("#enabledCheck").is(":checked")) });
 		var dbsModalMode = $("#dbsModalCategory").val();
 		var requestUrls = (dbsModalMode ?? "") == "ADD" ? "/insertMonitoredDb" : ((dbsModalMode ?? "") == "EDIT" ? "/updateMonitoredDb" : "");
 		var returnMsg = (dbsModalMode ?? "") == "ADD" ? "등록" : ((dbsModalMode ?? "") == "EDIT" ? "수정" : "");
@@ -332,7 +336,7 @@ $(document).ready(function () {
 				form.classList.remove('was-validated');
 				console.log('yes');
 				$.ajax({
-					url: requestUrls,
+					url: requestUrls, 
 					data: params,
 					//dataType : "json",
 					type: "post",
@@ -366,9 +370,7 @@ $(document).ready(function () {
 	});
 });
 
-// $("#enabledCheck").click(function () {
-	// 	disabledForm(this.checked);
-	// })
+
 
 
 // var dbTypeEditTemplate = function (value, item) {
@@ -577,9 +579,7 @@ function selectMonitoredDbDetail(id) {
 function initModalDbsForm(params) {
 	$.each(params, function (i, data) {
 		var jsonData = data;
-
-		disabledForm(jsonData.md_is_enabled);
-		// $("#enabledCheck").prop("checked", jsonData.md_is_enabled);
+		$("#enabledCheck").prop("checked", jsonData.md_is_enabled);
 		$("#dbsModalUname").val(jsonData.md_unique_name);
 		$("#dbsModalSts").val(jsonData.md_statement_timeout_seconds);
 		$("#dbsModalHostName").val(jsonData.md_hostname);
