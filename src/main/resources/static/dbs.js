@@ -688,3 +688,32 @@ function gridRefresh(){
 	$("#" + grid_name + " > .jsgrid-grid-body").scrollTop(0);
 	$("#" + grid_name + " > .jsgrid-grid-body").scrollLeft(0);
 }
+
+postTest = () => {
+	$.ajax({
+		url : "/sendAlert",
+		// data : "md_id=" + id,
+		//dataType : "json",
+		type : "post",
+		async : false,
+		error : function(xhr, status, error) {
+			if(xhr.status == 401) {
+				alert(message_msg02);
+				top.location.href = "/";
+			} else if(xhr.status == 403) {
+				alert(message_msg03);
+				top.location.href = "/";
+			} else {
+				alert("ERROR CODE : "+ xhr.status+ "\n\n"+ "ERROR Message : "+ error+ "\n\n"+ "Error Detail : "+ xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
+			}
+		},
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader("AJAX", true);
+		 },
+		success : function(result) {
+			console.log(result);
+
+			// initModalDbsForm(result);
+		}
+	});
+}

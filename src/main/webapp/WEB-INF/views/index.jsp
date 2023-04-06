@@ -116,6 +116,7 @@
                                 <!-- <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li> -->
                                 <li class="breadcrumb-item active">Databases under monitoring</li>
                             </ol>
+                            <button onClick="postTest()">alert 등록</button>
                             <%-- <div class="card mb-4">
                                 <div class="card-body">
                                     수집 대상 데이터 베이스 관리 화면 입니다.

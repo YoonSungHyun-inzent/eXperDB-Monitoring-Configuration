@@ -14,7 +14,7 @@ import com.experdb.configuration.service.serviceInterface.PresetsService;
 import com.experdb.configuration.service.serviceInterface.ThresholdsService;
 import com.experdb.configuration.util.ConvertJSON;
 import com.experdb.configuration.util.GrafanaAPIUtil;
-import com.experdb.configuration.util.SupervisorControl;
+import com.experdb.configuration.util.SupervisorAPIUtil;
 
 import lombok.AllArgsConstructor;
 
@@ -305,7 +305,7 @@ public class ConfigController {
     @ResponseBody
     @RequestMapping(value = "/getAllProcessInfo",  method = RequestMethod.GET)
     public JSONObject getSupervisorStatus(HttpServletRequest request, HttpServletResponse response,@RequestParam HashMap<String, Object> paramMap, Model model) throws Exception {
-        SupervisorControl control = new SupervisorControl();
+        SupervisorAPIUtil control = new SupervisorAPIUtil();
         List<Map<String, Object>> a = control.getAllProcessInfo();
 
         for (Map<String, Object> processInfo : a) {
