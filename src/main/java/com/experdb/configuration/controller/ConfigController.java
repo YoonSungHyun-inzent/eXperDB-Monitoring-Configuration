@@ -13,17 +13,16 @@ import com.experdb.configuration.service.serviceInterface.MetricsService;
 import com.experdb.configuration.service.serviceInterface.PresetsService;
 import com.experdb.configuration.service.serviceInterface.ThresholdsService;
 import com.experdb.configuration.util.ConvertJSON;
+import com.experdb.configuration.util.GrafanaAPIUtil;
+import com.experdb.configuration.util.SupervisorControl;
 
 import lombok.AllArgsConstructor;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.MissingRequestHeaderException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,7 +35,6 @@ public class ConfigController {
     private MetricsService metricsService;
     private PresetsService presetsService;
     private ThresholdsService thresholdsService;
-
     
     @RequestMapping(value = "/")
     // public String index(HttpServletRequest request, HttpServletResponse response,@RequestHeader("Cookie") String cookie, Model model) throws Exception {
@@ -288,6 +286,35 @@ public class ConfigController {
         JSONObject result = new JSONObject();
         System.out.println(paramMap + " ::: " + response);
         result.put("result", thresholds);
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/getAlert",  method = RequestMethod.GET)
+    public JSONObject getAlert(HttpServletRequest request, HttpServletResponse response,@RequestParam HashMap<String, Object> paramMap, Model model) throws Exception {
+        String url = "http://192.168.99.49:3000/api/v1/provisioning/alert-rules";
+        String alert = GrafanaAPIUtil.sendApi(url, HttpMethod.GET);
+        
+        System.out.println(request.getRequestURL());
+
+        JSONObject result = new JSONObject();
+        result.put("result", alert);
+        return result;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "/getAllProcessInfo",  method = RequestMethod.GET)
+    public JSONObject getSupervisorStatus(HttpServletRequest request, HttpServletResponse response,@RequestParam HashMap<String, Object> paramMap, Model model) throws Exception {
+        SupervisorControl control = new SupervisorControl();
+        List<Map<String, Object>> a = control.getAllProcessInfo();
+
+        for (Map<String, Object> processInfo : a) {
+            System.out.println("Process Name: " + processInfo.get("name"));
+            System.out.println("Process State: " + processInfo.get("state"));
+        }
+        
+        JSONObject result = new JSONObject();
+        result.put("result", a);
         return result;
     }
 
