@@ -37,9 +37,12 @@ public class ConfigController {
     private PresetsService presetsService;
     private ThresholdsService thresholdsService;
     
-    @RequestMapping(value = "/")
+    @RequestMapping(value = {"/", "dbs"})
     // public String index(HttpServletRequest request, HttpServletResponse response,@RequestHeader("Cookie") String cookie, Model model) throws Exception {
-    public String index(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+    public String dbs(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+        List<Map<String,Object>> presetList = dbsService.selectPresetConfig();
+        model.addAttribute("presetlist", presetList);        
+        
         return "dbs";
     }
 
@@ -47,12 +50,6 @@ public class ConfigController {
     // public Object missingRequestHeaderException(MissingRequestHeaderException exception) {
     //     return ResponseEntity.badRequest().body("<script>alert('잘못된 경로로 접근하셨습니다.'); history.go(-1);</script>");
     // }
-
-    @RequestMapping(value = "/dbs")
-    public String dbs(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
-        return "redirect:/";
-    }
-
     @RequestMapping(value = "/metrics")
     public String metric(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
         return "metrics";
