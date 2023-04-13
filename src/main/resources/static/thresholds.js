@@ -82,8 +82,8 @@ var initJsGridThreshold = function() {
 			loadData: function() {
 				var d = $.Deferred();
 				$.ajax({
-					url: "/selectThresholds",
-					type : "post",
+					url: "/thresholds",
+					type : "get",
 					dataType: "json"
 				}).done(function(response) {
 					d.resolve(response);
@@ -93,15 +93,14 @@ var initJsGridThreshold = function() {
 			},
 			
 			insertItem: function (params) {
-				console.log("params:", params.stat_name);	
 				if(testfunc(params.stat_name)){
 					alert('중복된 값이 존재합니다.');	
 					gridRefresh("jsGridThresholds");	
 				}else{
 					return $.ajax({
-						url : "/insertThresholds",
+						url : "/thresholds",
 						data : params,
-						// dataType : "json",
+						dataType : "json",
 						type : "post",
 						async : false,
 						error : function(xhr, status, error) {
@@ -132,12 +131,11 @@ var initJsGridThreshold = function() {
 			},	
 				
 			updateItem: function (params) {
-				console.log('업데이트_params : ',params);
 				return $.ajax({
-					url : "/updateThresholds",
+					url : "/thresholds",
 					data : params,
-					// dataType : "json",
-					type : "post",
+					dataType : "json",
+					type : "put",
 					async : false,
 					error : function(xhr, status, error) {
 						if(xhr.status == 401) {
@@ -155,12 +153,9 @@ var initJsGridThreshold = function() {
 					},
 					success : function(val) {
 						if(val.result==0){
-							alert("수정 실패111",val);
-							console.log("val",val);
+							alert("수정 실패",val);
 						}else{
 							alert("수정 완료");
-							console.log("수정완료");
-							console.log(val);
 						}
 						gridRefresh(grid_name);
 					}
@@ -169,10 +164,10 @@ var initJsGridThreshold = function() {
 
 			deleteItem: function (params) {
 				return $.ajax({
-					url : "/deleteThresholds",
+					url : "/thresholds",
 					data : params,
-					// dataType : "json",
-					type : "post",
+					dataType : "json",
+					type : "delete",
 					async : false,
 					error : function(xhr, status, error) {
 						if(xhr.status == 401) {
@@ -191,10 +186,8 @@ var initJsGridThreshold = function() {
 					success : function(val) {
 						if(val.result==0){
 							alert("삭제 실패");
-							console.log("실패",val);
 						}else{
 							alert("삭제 완료");
-							console.log("완료",val);
 						}
 						gridRefresh("jsGridThresholds");
 						// gridRefresh(grid_name);

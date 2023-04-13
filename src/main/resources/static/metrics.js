@@ -48,8 +48,8 @@ var initJsGridMetricDefinitions = function() {
 				var d = $.Deferred();
 
 				$.ajax({
-					url: "/selectMetrics",
-					type : "post",
+					url: "/metric",
+					type : "get",
 					dataType: "json",
 					data: filter
 				}).done(function(response) {
@@ -58,74 +58,74 @@ var initJsGridMetricDefinitions = function() {
 
 				return d.promise();
 			},
-			insertItem: function (params) {
-				return $.ajax({
-					url : "/insertMetric",
-					data : params,
-					//dataType : "json",
-					type : "post",
-					async : false,
-					error : function(xhr, status, error) {
-						if(xhr.status == 401) {
-							alert(message_msg02);
-							top.location.href = "/";
-						} else if(xhr.status == 403) {
-							alert(message_msg03);
-							top.location.href = "/";
-						} else {
-							alert("ERROR CODE : "+ xhr.status+ "\n\n"+ "ERROR Message : "+ error+ "\n\n"+ "Error Detail : "+ xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
-						}
-					},
-					beforeSend: function(xhr) {
-						xhr.setRequestHeader("AJAX", true);
-					 },
-					success : function(val) {
-						if(val.result==0){
-							alert("등록 실패");
-						}else{
-							alert("등록 완료");
-						}
-						gridRefresh(grid_name);
-					}
-				});
-			},
-			updateItem: function (params) {
-				return $.ajax({
-					url : "/updateMetric",
-					data : params,
-					// dataType : "json",
-					type : "post",
-					async : false,
-					error : function(xhr, status, error) {
-						if(xhr.status == 401) {
-							alert(message_msg02);
-							top.location.href = "/";
-						} else if(xhr.status == 403) {
-							alert(message_msg03);
-							top.location.href = "/";
-						} else {
-							alert("ERROR CODE : "+ xhr.status+ "\n\n"+ "ERROR Message : "+ error+ "\n\n"+ "Error Detail : "+ xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
-						}
-					},
-					beforeSend: function(xhr) {
-						xhr.setRequestHeader("AJAX", true);
-					 },
-					success : function(val) {
-						if(val.result==0){
-							alert("수정 실패");
-						}else{
-							alert("수정 완료");
-						}
-						gridRefresh(grid_name);
-					}
-				});
-			},
+			// insertItem: function (params) {
+			// 	return $.ajax({
+			// 		url : "/metric",
+			// 		data : params,
+			// 		dataType : "json",
+			// 		type : "post",
+			// 		async : false,
+			// 		error : function(xhr, status, error) {
+			// 			if(xhr.status == 401) {
+			// 				alert(message_msg02);
+			// 				top.location.href = "/";
+			// 			} else if(xhr.status == 403) {
+			// 				alert(message_msg03);
+			// 				top.location.href = "/";
+			// 			} else {
+			// 				alert("ERROR CODE : "+ xhr.status+ "\n\n"+ "ERROR Message : "+ error+ "\n\n"+ "Error Detail : "+ xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
+			// 			}
+			// 		},
+			// 		beforeSend: function(xhr) {
+			// 			xhr.setRequestHeader("AJAX", true);
+			// 		 },
+			// 		success : function(val) {
+			// 			if(val.result==0){
+			// 				alert("등록 실패");
+			// 			}else{
+			// 				alert("등록 완료");
+			// 			}
+			// 			gridRefresh(grid_name);
+			// 		}
+			// 	});
+			// },
+			// updateItem: function (params) {
+			// 	return $.ajax({
+			// 		url : "/metric",
+			// 		data : params,
+			// 		dataType : "json",
+			// 		type : "put",
+			// 		async : false,
+			// 		error : function(xhr, status, error) {
+			// 			if(xhr.status == 401) {
+			// 				alert(message_msg02);
+			// 				top.location.href = "/";
+			// 			} else if(xhr.status == 403) {
+			// 				alert(message_msg03);
+			// 				top.location.href = "/";
+			// 			} else {
+			// 				alert("ERROR CODE : "+ xhr.status+ "\n\n"+ "ERROR Message : "+ error+ "\n\n"+ "Error Detail : "+ xhr.responseText.replace(/(<([^>]+)>)/gi, ""));
+			// 			}
+			// 		},
+			// 		beforeSend: function(xhr) {
+			// 			xhr.setRequestHeader("AJAX", true);
+			// 		 },
+			// 		success : function(val) {
+			// 			if(val.result==0){
+			// 				alert("수정 실패");
+			// 			}else{
+			// 				alert("수정 완료");
+			// 			}
+			// 			gridRefresh(grid_name);
+			// 		}
+			// 	});
+			// },
 			deleteItem: function (params) {
 				return $.ajax({
-					url : "/deleteMetric",
+					url : "/metric",
 					data : params,
-					// dataType : "json",
-					type : "post",
+					dataType : "json",
+					type : "delete",
 					async : false,
 					error : function(xhr, status, error) {
 						if(xhr.status == 401) {
@@ -196,7 +196,7 @@ var initJsGridMetricDefinitions = function() {
 	$("#msModalFormSubmit").click(function() {
 		var params = changeSnakeCase($("#msModalForm").serializeArray());
 		var msModalMode = $("#msModalCategory").val();
-		var requestUrls = (msModalMode ?? "") == "ADD" ? "/insertMetric" : ((msModalMode ?? "") == "EDIT" ? "/updateMetric" : "" ) ; 
+		var requestType = (msModalMode ?? "") == "ADD" ? "POST" : ((msModalMode ?? "") == "EDIT" ? "PUT" : "" ) ; 
 		var returnMsg = (msModalMode ?? "") == "ADD" ? "등록" : ((msModalMode ?? "") == "EDIT" ? "수정" : "" ) ; 
 
 		$.each($("#msModalForm [type=checkbox]"), function(i, v){
@@ -211,10 +211,10 @@ var initJsGridMetricDefinitions = function() {
 		});
 
 		$.ajax({
-			url : requestUrls,
+			url : "/metric",
 			data : params,
-			//dataType : "json",
-			type : "post",
+			dataType : "json",
+			type : requestType,
 			async : false,
 			error : function(xhr, status, error) {
 				if(xhr.status == 401) {
@@ -283,9 +283,9 @@ var openMsModal = function (category, id) {
 
 var selectMetricsDetail = function(id) {
 	$.ajax({
-		url : "/selectMetricsDetail",
-		data : "m_id=" + id,
-		//dataType : "json",
+		url : "/metric/" + id,
+		// data : "m_id=" + id,
+		dataType : "json",
 		type : "get",
 		async : false,
 		error : function(xhr, status, error) {

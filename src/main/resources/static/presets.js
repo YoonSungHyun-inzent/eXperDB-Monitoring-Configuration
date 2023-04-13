@@ -45,8 +45,8 @@ var initJsGridPreset = function() {
 				var d = $.Deferred();
 
 				$.ajax({
-					url: "/selectPresetConfigs",
-					type : "post",
+					url: "/preset-configs",
+					type : "get",
 					dataType: "json"
 				}).done(function(response) {
 					d.resolve(response);
@@ -118,10 +118,10 @@ var initJsGridPreset = function() {
 			// },
 			deleteItem: function (params) {
 				return $.ajax({
-					url : "/deletePresetConfigs",
+					url : "/preset-configs",
 					data : params,
-					// dataType : "json",
-					type : "post",
+					dataType : "json",
+					type : "delete",
 					async : false,
 					error : function(xhr, status, error) {
 						if(xhr.status == 401) {
@@ -177,7 +177,7 @@ var initJsGridPreset = function() {
 	$("#psModalFormSubmit").click(function() {
 		var params = changeSnakeCase($("#psModalForm").serializeArray());
 		var psModalMode = $("#psModalCategory").val();
-		var requestUrls = (psModalMode ?? "") == "ADD" ? "/insertPresetConfigs" : ((psModalMode ?? "") == "EDIT" ? "/updatePresetConfigs" : "" ) ; 
+		var requestType = (psModalMode ?? "") == "ADD" ? "POST" : ((psModalMode ?? "") == "EDIT" ? "PUT" : "" ) ; 
 		var returnMsg = (psModalMode ?? "") == "ADD" ? "등록" : ((psModalMode ?? "") == "EDIT" ? "수정" : "" ) ; 
 		var grid = $("#jsGridPresetConfig").data("JSGrid");
 		var data = grid.data;
@@ -195,10 +195,10 @@ var initJsGridPreset = function() {
 		
 
 		$.ajax({
-			url : requestUrls,
+			url : "/preset-configs",
 			data : params,
-			//dataType : "json",
-			type : "post",
+			dataType : "json",
+			type : requestType,
 			async : false,
 			error : function(xhr, status, error) {
 				if(xhr.status == 401) {
@@ -304,9 +304,9 @@ var openPsModal = function (category, name) {
 
 var selectPresetConfigsDetail = function(name) {
 	$.ajax({
-		url : "/selectPresetConfigsDetail",
-		data : "pc_name=" + name,
-		//dataType : "json",
+		url : "/preset-configs/" + name,
+		// data : "pc_name=" + name,
+		dataType : "json",
 		type : "get",
 		async : false,
 		error : function(xhr, status, error) {
